@@ -1,0 +1,36 @@
+.catalog-products {
+  width: 20rem;
+  height: 20rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.catalog-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.catalog-img {
+  width: 15rem;
+}
+
+.catalog-h3 {
+  text-align: left;
+  margin: 1rem auto;
+}
+
+.form-flex {
+  display: flex;
+  margin-left: auto;
+}
