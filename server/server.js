@@ -43,9 +43,30 @@ app.get('/api/products', async (req, res, next) => {
   }
 });
 
+app.get('/api/products/details/:category', async (req, res, next) => {
+  try {
+    const category = req.params.category;
+    console.log(category);
+    const sql = `
+    SELECT "productId",
+           "productName",
+           "price",
+           "image"
+      FROM "products"
+      WHERE "category" = $1;
+    `;
+    const params = [category];
+    const result = await db.query(sql, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 app.get('/api/products/:productId', async (req, res, next) => {
   try {
     const productId = Number(req.params.productId);
+    console.log(productId);
     if (!productId) {
       throw new Error(400, 'productId must be a positive integer');
     }
@@ -54,13 +75,13 @@ app.get('/api/products/:productId', async (req, res, next) => {
             "productName",
             "price",
             "description",
-            "image"
+            "image",
+            "category"
         from "products"
         where "productId" = $1
     `;
     const params = [productId];
     const result = await db.query(sql, params);
-    console.log(result.rows[0]);
     if (!result.rows[0]) {
       throw new Error(404, `cannot find product with productId ${productId}`);
     }
