@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import CatalogList from './CatalogList';
+import CatalogList from '../components/CatalogList';
 
 // const url = (path) => `${process.env.REACT_APP_BASE_URL}${path}`;
 
