@@ -117,7 +117,7 @@ export default function Checkout() {
                 <div className="row">
                     <div className="col-md-5 mb-3">
                         <label htmlFor="country">Country</label>
-                        <select className="custom-select d-block w-100" id="country" required>
+                        <select className="form-select d-block w-100" id="country" required>
                             <option>Choose...</option>
                             <option>United States</option>
                         </select>
@@ -125,7 +125,7 @@ export default function Checkout() {
                     </div>
                     <div className="col-md-4 mb-3">
                         <label htmlFor="state">State</label>
-                        <select className="custom-select d-block w-100" id="state" required>
+                        <select className="form-select d-block w-100" id="state" required>
                             <option>Choose...</option>
                             <option>California</option>
                         </select>

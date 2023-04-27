@@ -23,7 +23,12 @@ export default function NavBar () {
                   <Link className="nav-link text-white" to="/catalog">Catalog</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link text-white" to="/mycart">My Cart</Link>
+                  <Link className="nav-link text-white position-relative" to="/mycart">
+                    My Cart
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    99+
+                    <span className="visually-hidden">unread messages</span>
+                  </span></Link>
                 </li>
               </div>
             </ul>
@@ -38,16 +43,15 @@ export default function NavBar () {
                     </li>
                     <li><a className="dropdown-item" href="!#">Another action</a></li>
                     <li><hr className="dropdown-divider" /></li>
-                    <li><a className="dropdown-item" href="!#">Something else here</a></li>
+                  {user &&
+                    <button className="btn btn-dark" onClick={handleSignOut}>
+                      Sign out
+                    </button>
+                  }
                   </ul>
                 </li>
               </ul>
             <div>
-              {user &&
-                <button className="btn btn-dark" onClick={handleSignOut}>
-                  Sign out
-                </button>
-              }
               {!user &&
                 <>
                   <Link to="/signin" className="btn btn-primary">

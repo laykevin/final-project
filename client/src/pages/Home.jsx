@@ -40,7 +40,7 @@ export default function Home() {
       <Carousel images={newItems}/>
       <h1 className="text-white text-center">🔥Hot Items🔥</h1>
       <div className="row">
-        <CatalogList catalog={hotItems} userInput={''} />
+        <CatalogList catalog={hotItems} />
       </div>
     </div>
 

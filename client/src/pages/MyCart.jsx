@@ -8,6 +8,7 @@ export default function MyCart() {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
+
   useEffect(() => {
     !user && navigate('/signin');
     const getCart = async () => {
