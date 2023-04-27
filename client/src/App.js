@@ -1,57 +1,70 @@
-// import { useEffect, useState } from 'react';
-// import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
 import NavBar from './components/NavBar';
-// import Carousel from './components/Carousel';
-import Catalog from './components/Catalog';
+import { Routes, Route, useNavigate } from "react-router-dom";
+import jwtDecode from 'jwt-decode';
+import AppContext from './components/AppContext';
+import Catalog from './pages/Catalog';
 import Footer from './components/Footer';
+import Home from './pages/Home';
+import MyCart from './pages/MyCart';
+import ProductDetails from './pages/ProductDetails';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
+import Checkout from './pages/Checkout';
+import OrderHistory from './pages/OrderHistory';
 
-// const images = [{
-//   name: 'bulbasaur',
-//   src: 'https://archives.bulbagarden.net/media/upload/thumb/f/fb/0001Bulbasaur.png/600px-0001Bulbasaur.png'
-// },
-// {
-//   name: 'charmander',
-//   src: 'https://archives.bulbagarden.net/media/upload/thumb/2/27/0004Charmander.png/600px-0004Charmander.png'
-// },
-// {
-//   name: 'squirtle',
-//   src: 'https://archives.bulbagarden.net/media/upload/thumb/5/54/0007Squirtle.png/600px-0007Squirtle.png'
-// },
-// {
-//   name: 'pikachu',
-//   src: 'https://archives.bulbagarden.net/media/upload/thumb/4/4a/0025Pikachu.png/600px-0025Pikachu.png'
-// },
-// {
-//   name: 'Lamberto',
-//   src: 'https://media.licdn.com/dms/image/D5603AQHskoJ15lo5Ww/profile-displayphoto-shrink_800_800/0/1678146443075?e=1686182400&v=beta&t=Vwk2ook4F8IUVX6ZoRMbMDNA8oE4gAwCAykoORur5Tk'
-// },
-// ]
+const tokenKey = 'react-context-jwt'
 
 function App() {
-  // const [serverData, setServerData] = useState("");
+  const [user, setUser] = useState();
+  const [isAuthorizing, setIsAuthorizing] = useState(true);
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   async function getServerData() {
-  //     const resp = await fetch('/api/hello');
-  //     const data = await resp.json();
+  useEffect(() => {
+    const token = localStorage.getItem(tokenKey);
+    const user = token ? jwtDecode(token) : null;
+    setUser(user);
+    setIsAuthorizing(false);
+  }, []);
 
-  //     console.log('Data from server:', data);
+  if (isAuthorizing) return null;
 
-  //     setServerData(data.message);
-  //   }
+  function handleSignIn(result) {
+    const { user, token } = result;
+    localStorage.setItem(tokenKey, token);
+    setUser(user);
+    navigate(-2);
+  }
 
-  //   getServerData();
-  // }, []);
+  function handleSignOut() {
+    localStorage.removeItem(tokenKey);
+    setUser(undefined);
+    navigate('/');
+  }
+
+  const contextValue = { user, handleSignIn, handleSignOut };
 
   return (
-    <div className="App">
-
-        <NavBar />
-        {/* <Carousel images={images}/> */}
-        <Catalog />
-        {/* <h1>{serverData}</h1> */}
+    <div className="App d-flex flex-column min-vh-100">
+      <AppContext.Provider value={contextValue}>
+        <div className="flex-grow-1 d-flex flex-column">
+          <Routes>
+            <Route path="/" element={<NavBar />}>
+              <Route index element={<Home />} />
+              <Route path="details/:productId" element={<ProductDetails />} />
+              <Route path="catalog" element={<Catalog />} />
+              <Route path="mycart" element={<MyCart />} />
+              <Route path="signup" element={<SignUp />} />
+              <Route path="signin" element={<SignIn onSignIn={handleSignIn}/>} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path ="orderhistory" element={<OrderHistory />} />
+              {/* <Route path="*" element={<NotFound />} /> */}
+            </Route>
+          </Routes>
+        </div>
         <Footer />
+      </AppContext.Provider>
     </div>
   );
 }
