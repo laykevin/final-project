@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-// import logo from './logo.svg';
 import './App.css';
 import NavBar from './components/NavBar';
 import { Routes, Route, useNavigate } from "react-router-dom";
-// import Carousel from './components/Carousel';
 import jwtDecode from 'jwt-decode';
 import AppContext from './components/AppContext';
 import Catalog from './pages/Catalog';
@@ -46,7 +44,7 @@ function App() {
   }
 
   const contextValue = { user, handleSignIn, handleSignOut };
-  console.log(user);
+
   return (
     <div className="App d-flex flex-column min-vh-100">
       <AppContext.Provider value={contextValue}>

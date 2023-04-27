@@ -5,9 +5,8 @@ import { HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineChevronUp, HiOutl
 
 export default function RelatedProductsList({ related, productId }) {
   const [page, setPage] = useState(0)
-  const showThree = related.slice(page, page + 3)
-  console.log(related);
-  console.log(showThree);
+
+  const showThree = related.slice(page, page + 3);
 
   function handleLeftButton () {
     page > 0 && setPage(page - 3)

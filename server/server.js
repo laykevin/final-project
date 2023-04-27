@@ -207,7 +207,6 @@ app.post('/api/mycart/:cartId/:productId/:productQuantity', async (req, res, nex
     `;
     const checkCartParams = [productId, cartId];
     const checkCartresult = await db.query(checkCartsql, checkCartParams);
-    console.log(checkCartresult.rows);
     if (checkCartresult.rows.length > 0) {
       throw new ClientError(400, 'You can only buy 5 of each item per order!');
     }

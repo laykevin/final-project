@@ -11,7 +11,7 @@ export default function ProductInformation() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
   const { user } = useContext(AppContext);
-  console.log(user);
+
   useEffect(() => {
     async function loadProduct(productId) {
       try {
@@ -44,8 +44,6 @@ export default function ProductInformation() {
       };
       const res = await fetch(`/api/mycart/${cartId}/${productId}/${quantity}`, req);
       if (!res.ok) throw new Error(`fetch Error ${res.status}`);
-      const result = await res.json();
-      console.log(result);
     } catch (err) {
       setError(err);
     }
@@ -56,6 +54,7 @@ export default function ProductInformation() {
       <span className="spinner-border text-secondary" role="status"></span>
     </div>
   );
+
   if (error) {
     return (
       <div>
@@ -63,9 +62,11 @@ export default function ProductInformation() {
       </div>
     );
   }
+
   if (!product) return null;
+
   const { productName, image, price, description, category } = product;
-  console.log(image);
+
   return (
     <div className="container black-bg-img">
       <div className="card shadow-sm">
