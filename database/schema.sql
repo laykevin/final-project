@@ -23,7 +23,7 @@ CREATE TABLE "public"."products" (
 CREATE TABLE "public"."customers" (
 	"customerId" serial NOT NULL,
 	"username" TEXT NOT NULL,
-	"password" TEXT NOT NULL,
+	"hashedPassword" TEXT NOT NULL,
 	"email" TEXT NOT NULL,
 	CONSTRAINT "customers_pk" PRIMARY KEY ("customerId")
 ) WITH (
@@ -52,7 +52,7 @@ CREATE TABLE "public"."orderedProducts_map" (
 	"description" TEXT NOT NULL,
 	"image" TEXT NOT NULL,
 	-- "category" TEXT NOT NULL,
-	"productId" bigint NOT NULL,
+	"productId" integer NOT NULL,
 	CONSTRAINT "orderedProducts_map_pk" PRIMARY KEY ("orderedProductId")
 ) WITH (
   OIDS=FALSE

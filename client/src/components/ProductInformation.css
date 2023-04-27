@@ -8,13 +8,20 @@
   white-space: pre-wrap;
 }
 
-/* .pos-rel {
+.related-h3 {
+  text-align: center;
+}
+
+.pos-rel {
   position: relative;
-} */
+}
 
 .add-cart-button {
-  /* float: right; */
-  /* position: absolute;
+  position: absolute;
   bottom: 1rem;
-  right: 1rem;*/
+  right: 1rem;
+}
+
+.pils {
+  padding-inline-start: 0;
 }

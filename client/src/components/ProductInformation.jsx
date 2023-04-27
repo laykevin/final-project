@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import AppContext from './AppContext';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import './ProductInformation.css'
 import RelatedProducts from './RelatedProducts';
 
 export default function ProductInformation() {
   const { productId } = useParams();
   const [product, setProduct] = useState();
+  const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
-
+  const { user } = useContext(AppContext);
+  console.log(user);
   useEffect(() => {
     async function loadProduct(productId) {
       try {
@@ -27,7 +29,33 @@ export default function ProductInformation() {
     loadProduct(productId);
   }, [productId]);
 
-  if (isLoading) return <div>Loading...</div>;
+
+  async function addToCart () {
+    try {
+      const token = localStorage.getItem('react-context-jwt')
+      const cartId = user.cartId;
+      const req = {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cartId, productId, quantity }),
+      };
+      const res = await fetch(`/api/mycart/${cartId}/${productId}/${quantity}`, req);
+      if (!res.ok) throw new Error(`fetch Error ${res.status}`);
+      const result = await res.json();
+      console.log(result);
+    } catch (err) {
+      setError(err);
+    }
+  }
+
+  if (isLoading) return (
+    <div className=" container d-flex justify-content-center align-items-center black-bg-img flex-grow-1" style={{ height: "50vh" }}>
+      <span className="spinner-border text-secondary" role="status"></span>
+    </div>
+  );
   if (error) {
     return (
       <div>
@@ -37,14 +65,14 @@ export default function ProductInformation() {
   }
   if (!product) return null;
   const { productName, image, price, description, category } = product;
+  console.log(image);
   return (
-    <div className="container">
+    <div className="container black-bg-img">
       <div className="card shadow-sm">
         <div className="card-body">
           <div className="row">
             <div className="col">
               <Link className="btn text-secondary" to="/catalog">
-                {/* TODO: Instead of a div, the above should link to `/` */}
                 &lt; Back to catalog
               </Link>
             </div>
@@ -55,16 +83,22 @@ export default function ProductInformation() {
             </div>
             <div className="col-12 col-sm-6 col-md-7">
               <h2>{productName}</h2>
-              <h5 className="text-secondary">{`$${Number(price).toFixed(2)}`}</h5>
+              <h5 className="text-secondary">{`$${Number(price).toFixed(2)/100}`}</h5>
               <p>{description}</p>
-              <button className="add-cart-button btn btn-outline-success my-2 my-sm-0" >Add to cart</button>
+              <div className="input-group">
+                <span className="input-group-text" id="basic-addon1">Quantity</span>
+                <input max="5" min="1" className="form-control" type="number" placeholder="1" value={quantity} onKeyDown={(e) => e.preventDefault()} onChange={(e) => setQuantity(e.target.value)}/>
+              </div>
+              <Link to="/mycart">
+                <button onClick={addToCart} className=" add-cart-button btn btn-outline-success my-2 my-sm-0" >Add to cart</button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
       <div className="card shadow-sm">
         <div className="card-body">
-          <RelatedProducts category={category}/>
+          <RelatedProducts category={category} productId={productId}/>
         </div>
       </div>
     </div>

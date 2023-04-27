@@ -1,36 +1,65 @@
 import { Outlet, Link } from "react-router-dom"
+import AppContext from "./AppContext"
+import { useContext } from "react";
 
 export default function NavBar () {
+  const { user } = useContext(AppContext);
+  const { handleSignOut } = useContext(AppContext);
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="#!">Navbar</a>
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-          <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li className="nav-item active">
-              {/* <a className="nav-link" href="#!">Home <span className="sr-only"></span></a> */}
-              <Link className="nav-link" to='/'>Home</Link>
-            </li>
-            <li className="nav-item">
-              {/* <a className="nav-link" href="#!">Catalog</a> */}
-              <Link className="nav-link" to="/catalog">Catalog</Link>
-            </li>
-            <li className="nav-item">
-              {/* <a className="nav-link" href="#!">My Cart</a> */}
-              <Link className="nav-link" to="/mycart">My Cart</Link>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link disabled" href="#!">Disabled</a>
-            </li>
-          </ul>
-          <form className="form-flex form-inline my-2 my-lg-0">
-            <input className="form-control mr-sm-2" type="search" placeholder="Search" />
-              <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </form>
+      <nav className="navbar navbar-expand-lg black-bg-img">
+        <div className="container">
+          <a className="navbar-brand text-white" href="#!">Navbar</a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span style={{ color: 'white' }} className="navbar-toggler-icon bs-"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex">
+              <div className="d-flex">
+                <li className="nav-item">
+                  <Link className="nav-link active text-white" to='/'>Home</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link text-white" to="/catalog">Catalog</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link text-white" to="/mycart">My Cart</Link>
+                </li>
+              </div>
+            </ul>
+            <ul className="navbar-nav mb-2 mb-lg-0 d-flex">
+              <li className="nav-item dropdown">
+                  { user && <a className="nav-link dropdown-toggle text-white" href="!#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {user.username}
+                  </a>}
+                  <ul className="dropdown-menu">
+                    <li>
+                    <Link to="/orderhistory" className="dropdown-item">Order History</Link>
+                    </li>
+                    <li><a className="dropdown-item" href="!#">Another action</a></li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li><a className="dropdown-item" href="!#">Something else here</a></li>
+                  </ul>
+                </li>
+              </ul>
+            <div>
+              {user &&
+                <button className="btn btn-dark" onClick={handleSignOut}>
+                  Sign out
+                </button>
+              }
+              {!user &&
+                <>
+                  <Link to="/signin" className="btn btn-primary">
+                    Sign In
+                  </Link>
+                  <Link to="/signup" className="btn btn-dark">
+                    Sign Up
+                  </Link>
+                </>
+              }
+            </div>
+          </div>
         </div>
       </nav>
       <Outlet />

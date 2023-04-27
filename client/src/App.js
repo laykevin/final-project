@@ -1,53 +1,72 @@
-// import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import NavBar from './components/NavBar';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 // import Carousel from './components/Carousel';
+import jwtDecode from 'jwt-decode';
+import AppContext from './components/AppContext';
 import Catalog from './pages/Catalog';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import MyCart from './pages/MyCart';
 import ProductDetails from './pages/ProductDetails';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
+import Checkout from './pages/Checkout';
+import OrderHistory from './pages/OrderHistory';
+
+const tokenKey = 'react-context-jwt'
 
 function App() {
-  // const [serverData, setServerData] = useState("");
+  const [user, setUser] = useState();
+  const [isAuthorizing, setIsAuthorizing] = useState(true);
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   async function getServerData() {
-  //     const resp = await fetch('/api/hello');
-  //     const data = await resp.json();
+  useEffect(() => {
+    const token = localStorage.getItem(tokenKey);
+    const user = token ? jwtDecode(token) : null;
+    setUser(user);
+    setIsAuthorizing(false);
+  }, []);
 
-  //     console.log('Data from server:', data);
+  if (isAuthorizing) return null;
 
-  //     setServerData(data.message);
-  //   }
+  function handleSignIn(result) {
+    const { user, token } = result;
+    localStorage.setItem(tokenKey, token);
+    setUser(user);
+    navigate(-2);
+  }
 
-  //   getServerData();
-  // }, []);
+  function handleSignOut() {
+    localStorage.removeItem(tokenKey);
+    setUser(undefined);
+    navigate('/');
+  }
 
-  // return (
-  //   <div className="App">
-
-  //       <NavBar />
-  //       {/* <Carousel images={images}/> */}
-  //       <Catalog />
-  //       {/* <h1>{serverData}</h1> */}
-  //       <Footer />
-  //   </div>
-  // );
+  const contextValue = { user, handleSignIn, handleSignOut };
+  console.log(user);
   return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<NavBar />}>
-          <Route index element={<Home />} />
-          <Route path="details/:productId" element={<ProductDetails />} />
-          <Route path="catalog" element={<Catalog />} />
-          <Route path="mycart" element={<MyCart />} />
-          {/* <Route path="*" element={<NotFound />} /> */}
-        </Route>
-      </Routes>
-      <Footer />
+    <div className="App d-flex flex-column min-vh-100">
+      <AppContext.Provider value={contextValue}>
+        <div className="flex-grow-1 d-flex flex-column">
+          <Routes>
+            <Route path="/" element={<NavBar />}>
+              <Route index element={<Home />} />
+              <Route path="details/:productId" element={<ProductDetails />} />
+              <Route path="catalog" element={<Catalog />} />
+              <Route path="mycart" element={<MyCart />} />
+              <Route path="signup" element={<SignUp />} />
+              <Route path="signin" element={<SignIn onSignIn={handleSignIn}/>} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path ="orderhistory" element={<OrderHistory />} />
+              {/* <Route path="*" element={<NotFound />} /> */}
+            </Route>
+          </Routes>
+        </div>
+        <Footer />
+      </AppContext.Provider>
     </div>
   );
 }

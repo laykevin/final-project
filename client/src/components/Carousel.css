@@ -1,0 +1,81 @@
+.top-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.img-carousel {
+  width: 25rem;
+  transition: transform 0.3s ease-in-out;
+}
+
+.img-carousel:hover {
+  transform: scale(1.1);
+}
+
+.spin {
+  animation: App-logo-spin infinite 0.5s linear;
+  border-radius: 50%;
+}
+
+.button-carousel {
+  border-style: none;
+  background-color: rgb(255 255 255 / 0%);
+  cursor: pointer;
+}
+
+.pos-rel {
+  position: relative;
+}
+
+.new-items {
+  height: 7rem;
+  width: 7rem;
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  animation: new-item-pulse 7s infinite;
+}
+
+.z-index {
+  z-index: 2;
+}
+
+@keyframes new-item-pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  10% {
+    transform: rotate(-15deg);
+  }
+
+  20% {
+        transform: rotate(5deg) scale(1.1);
+  }
+
+  30% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  60% {
+    transform: scale(1);
+  }
+
+  65% {
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(1);
+      }
+}
+
+.black-bg-img {
+  background-image: url(https://www.nintendo.com/my/switch/aabp/assets/images/common/bg_page-illust.jpg);
+}
+
+.carousel-bg-img {
+    background-image: url(https://www.nintendoworldreport.com/media/39284/4/1.jpg);
+  background-size: cover;
+}

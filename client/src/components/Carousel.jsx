@@ -1,62 +1,50 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { RxDot, RxDotFilled } from 'react-icons/rx';
-import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
+import './Carousel.css';
+import { Link } from "react-router-dom";
 
 export default function Carousel({ images }) {
   const [current, setCurrent] = useState(0);
 
+  const handleRightButton = useCallback(() => setCurrent((current + 1) % images.length), [current, images]);
+
   useEffect(() => {
-    const intervalId = setInterval(handleRightButton, 5000);
+    const intervalId = setInterval(handleRightButton, 7000);
     return () => clearInterval(intervalId);
-  });
-
-  function handleLeftButton() {
-    setCurrent(((current - 1) + images.length) % images.length)
-  }
-
-  function handleRightButton() {
-    setCurrent((current + 1) % images.length)
-  }
+  }, [handleRightButton]);
 
   return (
-    <div>
-      <div className="top-row">
-        <LeftButton click={handleLeftButton} />
-        <img className={current === 4 ? "spin" : undefined} alt={images[current].name} src={images[current].src} />
-        <RightButton click={handleRightButton} />
-      </div>
-      {images.map((image, index) =>
-        <Dot key={index}
-          click={() =>
+    <div className="container text-center text-white">
+      <div className="top-row carousel-bg-img">
+        <div className="pos-rel">
+          <Link className="pos-rel z-index" to={`/details/${images[current].id}`}>
+            <img className="img-carousel" alt={images[current].name} src={images[current].src} />
+          </Link>
+          <img className="new-items" src="https://img.freepik.com/free-icon/new_318-305431.jpg" alt="new"/>
+        </div>
+        <div className="col-12 col-sm-5">
+          <h2 className="mt-5">{images[current].name}</h2>
+          <p>{images[current].description}</p>
+        </div>
+        <div className="col-12">
+          {images.map((image, index) =>
+            <Dot key={index}
+            click={() =>
             setCurrent(index)}
-          isActive={index === current} />)}
+            isActive={index === current} />)}
+        </div>
+      </div>
     </div>
   )
 }
 
 function Dot({ isActive, click }) {
   return (
-    isActive ? <button style={{ marginTop: "2rem" }}>
+    isActive ? <button className="button-carousel">
       <RxDotFilled style={{ fontSize: "4rem" }} />
     </button>
-      : <button onClick={click} style={{ marginTop: "2rem" }}>
+      : <button className="button-carousel" onClick={click}>
         <RxDot style={{ fontSize: "4rem" }} />
-      </button>
-  )
-}
-
-function LeftButton({ click }) {
-  return (
-    <button onClick={click} style={{ marginRight: "7rem" }} >
-      <HiOutlineChevronLeft style={{ fontSize: '5rem' }} />
-    </button>
-  )
-}
-
-function RightButton({ click }) {
-  return (
-    <button onClick={click} style={{ marginLeft: "7rem" }}>
-      <HiOutlineChevronRight style={{ fontSize: '5rem' }} />
     </button>
   )
 }
