@@ -38,7 +38,8 @@ export default function Home() {
     <div className="container black-bg-img">
       <h1 className="text-white text-center">Welcome to Mario Mart!</h1>
       <Carousel images={newItems}/>
-      <h1 className="text-white text-center">🔥Hot Items🔥</h1>
+      <hr className="text-white" />
+      <h1 className="text-white text-center mb-3">🔥Hot Items🔥</h1>
       <div className="row">
         <CatalogList catalog={hotItems} />
       </div>

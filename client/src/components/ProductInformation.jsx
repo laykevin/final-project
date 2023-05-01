@@ -3,6 +3,7 @@ import AppContext from './AppContext';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import RelatedProducts from './RelatedProducts';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function ProductInformation() {
   const { productId } = useParams();
@@ -50,9 +51,7 @@ export default function ProductInformation() {
   }
 
   if (isLoading) return (
-    <div className=" container d-flex justify-content-center align-items-center black-bg-img flex-grow-1" style={{ height: "50vh" }}>
-      <span className="spinner-border text-secondary" role="status"></span>
-    </div>
+    <LoadingSpinner />
   );
 
   if (error) {

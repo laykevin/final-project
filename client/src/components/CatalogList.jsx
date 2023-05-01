@@ -1,37 +1,32 @@
 import './CatalogList.css'
 import { Link } from 'react-router-dom';
 
-export default function CatalogList({ catalog, userInput, selectInput, sortPrice }) {
-  const copy = () => catalog.map((copy) => copy);
-  let catalogSort = copy();
-  const filterByCategory = () => catalogSort.filter((product) => product.category.toLowerCase().includes(selectInput.toLowerCase()));
-  const nameSearch = () => filterByCategory().filter((product) => product.productName.toLowerCase().includes(userInput.toLowerCase()));
+export default function CatalogList({ catalog, searchBy, filterBy, sortBy }) {
+  let catalogCopy = [...catalog];
   const sortByPriceDesc = (filteredList) => filteredList.sort((first, second) => second.price - first.price);
   const sortByPriceAsc = (filteredList) => filteredList.sort((first, second) => first.price - second.price);
-  sortPrice === 'desc' && sortByPriceDesc(catalogSort);
-  sortPrice === 'asc' && sortByPriceAsc(catalogSort);
-  if (!sortPrice) {
-    catalogSort = copy();
+  const sortByNameDesc = (filteredList) => filteredList.reverse();
+  const filterByCategory = () => catalogCopy.filter((product) => product.category.toLowerCase().includes(filterBy.toLowerCase()));
+  const searchByName = () => catalogCopy.filter((product) => product.productName.toLowerCase().includes(searchBy.toLowerCase()));
+  const searchFilterByCategoryByName = () => filterByCategory().filter((product) => product.productName.toLowerCase().includes(searchBy.toLowerCase()));
+
+  sortBy === 'desc' && sortByPriceDesc(catalogCopy);
+  sortBy === 'asc' && sortByPriceAsc(catalogCopy);
+  sortBy === 'z-to-a' && sortByNameDesc(catalogCopy);
+  if (filterBy) {
+    if (searchBy) {
+      catalogCopy = searchFilterByCategoryByName();
+    }
+    catalogCopy = filterByCategory();
+  }
+  if (searchBy) {
+    catalogCopy = searchByName();
   }
 
-  if (selectInput) {
-    if (userInput) {
-      return (
-        <ul className="wrap">
-          {
-            nameSearch().map((product) =>
-              <Product
-                key={product.productId}
-                product={product} />
-            )
-          }
-        </ul>
-      );
-    }
     return (
       <ul className="wrap">
         {
-          filterByCategory().map((product) =>
+          catalogCopy.map((product) =>
             <Product
               key={product.productId}
               product={product} />
@@ -39,47 +34,6 @@ export default function CatalogList({ catalog, userInput, selectInput, sortPrice
         }
       </ul>
     );
-  }
-  if (userInput) {
-    const nameSearch = () => catalog.filter((product) => product.productName.toLowerCase().includes(userInput.toLowerCase()));
-    return (
-      <ul className="wrap">
-        {
-          nameSearch().map((product) =>
-            <Product
-              key={product.productId}
-              product={product} />
-          )
-        }
-      </ul>
-    );
-  }
-  //  else if (sortPrice) {
-  //   return (
-  //     <ul className="wrap">
-  //       {
-  //         catalogSort.map((product) =>
-  //           <Product
-  //             key={product.productId}
-  //             product={product} />
-  //         )
-  //       }
-  //     </ul>
-  //   );
-  // }
-   else {
-    return (
-      <ul className="wrap">
-        {
-          catalogSort.map((product) =>
-            <Product
-              key={product.productId}
-              product={product} />
-          )
-        }
-      </ul>
-    );
-  }
 }
 
 function Product({ product }) {

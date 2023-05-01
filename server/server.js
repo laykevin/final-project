@@ -33,7 +33,8 @@ app.get('/api/products', async (req, res, next) => {
            "price",
            "image",
            "category"
-      FROM "products";
+      FROM "products"
+      ORDER BY "productName";
     `;
     const result = await db.query(sql);
     res.json(result.rows);

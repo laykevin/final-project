@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AppContext from './AppContext';
 
@@ -47,25 +47,22 @@ function Product({ product }) {
 
   return (
     <div className="container">
-      <div className="card shadow-sm">
+      <div className="card shadow-sm mb-3">
         <div className="card-body">
           <div className="row">
             <div className="col">
-              <Link className="btn text-secondary" to="/catalog">
-                &lt; Back to catalog
-              </Link>
             </div>
           </div>
           <div className="row mb-4">
             <div className="col-12 col-sm-6 col-md-5">
-              <img src={image} alt={productName} className="image" />
+              <img src={image} alt={productName} className="cart-image" />
             </div>
             <div className="col-12 col-sm-6 col-md-7">
-              <h2>{productName}</h2>
+              <h3>{productName}</h3>
               <h5 className="text-secondary">{`$${Number(price).toFixed(2) / 100}`}</h5>
               <p>{description}</p>
               <p>{`Quantity: ${productQuantity}`}</p>
-                <button onClick={removeFromCart} className=" add-cart-button btn btn-outline-success my-2 my-sm-0" >Remove from cart</button>
+                <button onClick={removeFromCart} className=" add-cart-button btn btn-outline-danger my-2 my-sm-0" >Remove from cart</button>
             </div>
           </div>
         </div>

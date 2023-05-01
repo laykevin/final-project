@@ -13,6 +13,7 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Checkout from './pages/Checkout';
 import OrderHistory from './pages/OrderHistory';
+import NotFound from './pages/NotFound';
 
 const tokenKey = 'react-context-jwt'
 
@@ -59,7 +60,7 @@ function App() {
               <Route path="signin" element={<SignIn onSignIn={handleSignIn}/>} />
               <Route path="checkout" element={<Checkout />} />
               <Route path ="orderhistory" element={<OrderHistory />} />
-              {/* <Route path="*" element={<NotFound />} /> */}
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </div>

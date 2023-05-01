@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import AppContext from "../components/AppContext"
 import MyCartList from "../components/MyCartList";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function MyCart() {
   const [cart, setCart] = useState([]);
@@ -37,20 +38,57 @@ export default function MyCart() {
   },[user, navigate]);
 
   const getTotal = () => cart.reduce((acc, item) => acc += item.price * item.productQuantity, 0 )
+  const getTotalQuantity = () => cart.reduce((acc, item) => acc += item.productQuantity, 0);
+
 
   if (isLoading) return (
-    <div className=" container d-flex justify-content-center align-items-center black-bg-img flex-grow-1" style={{ height: "50vh" }}>
-      <span className="spinner-border text-secondary" role="status"></span>
-    </div>
+    <LoadingSpinner />
   );
   return (
     <div className="container text-white black-bg-img flex-grow-1">
-      <h1>My Cart</h1>
-      <p>{`Total: $${getTotal()/100}`}</p>
-      <Link to="/checkout">
-        <button className="btn btn-primary">Checkout</button>
+
+        <h1>My Cart</h1>
+      <Link className="btn text-secondary" to="/catalog">
+        &lt; Back to catalog
       </Link>
-      {user && <MyCartList mycart={cart} />}
+      <div className="row justify-content-md-center">
+        <div className="col-md-3 order-md-2 mb-4">
+          <h4 className="d-flex justify-content-between align-items-center mb-3">
+            <span>Your cart</span>
+            <span className="badge badge-secondary badge-pill">{getTotalQuantity()}</span>
+          </h4>
+          <ul className="list-group mb-3 sticky-top">
+            {/* {cart.map((product) =>
+              <Product
+                key={product.productId}
+                product={product} />
+            )} */}
+            <li className="list-group-item d-flex flex-wrap justify-content-between">
+              <span>Total (USD)</span>
+              <strong>{`$${(getTotal() / 100).toFixed(2)}`}</strong>
+              <Link to="/checkout" className="w-100">
+                <button className="btn btn-primary w-100">Checkout</button>
+              </Link>
+            </li>
+          </ul>
+          {/* <form className="card p-2">
+            <div className="input-group">
+              <input type="text" className="form-control" placeholder="Promo code" />
+              <div className="input-group-append">
+                <button type="submit" className="btn btn-secondary">Redeem</button>
+              </div>
+            </div>
+          </form> */}
+        </div>
+
+          <div className="col-md-8 order-md-1">
+        {/* <Link to="/checkout">
+          <button className="btn btn-primary">Checkout</button>
+        </Link> */}
+        {user && <MyCartList mycart={cart} />}
+
+        </div>
+      </div>
     </div>
   )
 }

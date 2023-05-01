@@ -31,6 +31,7 @@ export default function SignUp () {
         console.log(result.error);
         throw new Error(result.error)
       }
+      navigate('/signin');
       console.log(result);
     } catch (err) {
       console.error(err);

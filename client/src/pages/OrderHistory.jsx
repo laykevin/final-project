@@ -6,12 +6,13 @@ import { Product } from "./Checkout";
 export default function OrderHistory () {
   const [orderHistory, setOrderHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true)
+  // const [total, setTotal] = useState(0);
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
 
   useEffect(() => {
     !user && navigate('/signin');
-    const getCatalog = async () => {
+    const getOrderHistory = async () => {
       console.log(user.customerId)
       try {
         const token = localStorage.getItem('react-context-jwt')
@@ -34,15 +35,15 @@ export default function OrderHistory () {
         setIsLoading(false);
       }
     }
-    user && getCatalog();
+    user && getOrderHistory();
   }, [navigate, user]);
   console.log(orderHistory);
-
+  // let orderTotal = 0;
   function getOrderIds () {
     const orderIds = []
     orderHistory.forEach((product) => {
       if (!orderIds.includes(product.orderId)) {
-        orderIds.push(product.orderId)
+        orderIds.push(product.orderId);
       }
     })
     return orderIds;
@@ -51,6 +52,8 @@ export default function OrderHistory () {
   function getProductsByOrderId (orderId) {
     return orderHistory.filter((product) => product.orderId === orderId)
   }
+
+  // const getTotal = () => cart.reduce((acc, item) => acc += item.price * item.productQuantity, 0)
 
   if (isLoading) return (
     <div className=" container d-flex justify-content-center align-items-center black-bg-img flex-grow-1" style={{ height: "50vh" }}>
@@ -86,11 +89,18 @@ function Accordion ({uniqueId, orderHistory}) {
       </h2>
       <div id={uniqueId} className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
         <div className="accordion-body">
+          <ul className="list-group mb-3 sticky-top">
+
           {orderHistory.map((product) =>
             <Product
               key={product.productId}
               product={product} />
           )}
+            <li className="list-group-item d-flex justify-content-between">
+              <span>Total (USD)</span>
+              {/* <strong>{`$${getTotal() / 100}`}</strong> */}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
