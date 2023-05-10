@@ -37,9 +37,9 @@ export default function RelatedProducts({ category, productId }) {
   }
 
   if (isLoading) return (
-    <div className=" container d-flex justify-content-center align-items-center" style={{ height: "30vh" }}>
-      <span className="spinner-border text-secondary" role="status"></span>
-    </div>
+      <div className=" container d-flex justify-content-center align-items-center" style={{ height: "30vh" }}>
+        <span className="spinner-border text-secondary" role="status"></span>
+      </div>
   );
 
   return (

@@ -41,3 +41,20 @@
   display: flex;
   margin-left: auto;
 }
+
+@keyframes saveFade {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.save-fade {
+  animation: saveFade .25s;
+    /* position: absolute;
+      bottom: 1rem;
+      left: 1rem; */
+}

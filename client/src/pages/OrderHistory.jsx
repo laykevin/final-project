@@ -61,12 +61,12 @@ export default function OrderHistory () {
     </div>
   );
   return (
-    <div className="container black-bg-img text-white flex-grow-1">
+    <div className="container black-bg-img text-white flex-grow-1 pb-5">
       <div className="py-5 text-center">
-        <img className="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72" />
+        {/* <img className="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72" /> */}
         <h2>Order History</h2>
       </div>
-      <div className="accordion accordion-flush col-8 offset-2" id="accordionFlushExample">
+      <div className="accordion accordion-flush col-12 col-md-8 m-auto" id="accordionOrderHistory">
         {
         getOrderIds().map((orderId) =>
           <Accordion
@@ -80,14 +80,21 @@ export default function OrderHistory () {
 }
 
 function Accordion ({uniqueId, orderHistory}) {
+  const getTotal = () => orderHistory.reduce((acc, item) => acc += item.price * item.productQuantity, 0)
+  const getTotalQuantity = () => orderHistory.reduce((acc, item) => acc += item.productQuantity, 0);
+  const getFormattedDate = (dateString) => (new Date(dateString)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
   return (
     <div className="accordion-item">
       <h2 className="accordion-header">
         <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={'#'+uniqueId} aria-expanded="false" aria-controls="flush-collapseTwo">
-          Order #{uniqueId}
+          <span className="d-flex justify-content-between w-100">
+            <span>Order #{uniqueId}</span>
+            <span className="pe-3">{getFormattedDate(orderHistory[0].dateTime)}</span>
+          </span>
         </button>
       </h2>
-      <div id={uniqueId} className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      <div id={uniqueId} className="accordion-collapse collapse" data-bs-parent="#accordionOrderHistory">
         <div className="accordion-body">
           <ul className="list-group mb-3 sticky-top">
 
@@ -97,8 +104,12 @@ function Accordion ({uniqueId, orderHistory}) {
               product={product} />
           )}
             <li className="list-group-item d-flex justify-content-between">
+              <span>Number of items</span>
+              <strong>{`${getTotalQuantity()}`}</strong>
+            </li>
+            <li className="list-group-item d-flex justify-content-between">
               <span>Total (USD)</span>
-              {/* <strong>{`$${getTotal() / 100}`}</strong> */}
+              <strong>{`$${(getTotal() / 100).toFixed(2)}`}</strong>
             </li>
           </ul>
         </div>

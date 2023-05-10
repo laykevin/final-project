@@ -101,7 +101,7 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
   try {
     const { username, password, email } = req.body;
     if (!username || !password || !email) {
-      throw new Error(400, 'username, password, and email are required fields');
+      throw new ClientError(400, 'username, password, and email are required fields');
     }
     const selectUsernameSql = `
       select "username"
@@ -183,7 +183,8 @@ app.get('/api/mycart/:user', async (req, res, next) => {
         JOIN "cartedProducts_map" using ("productId")
         JOIN "carts" using ("cartId")
         JOIN "customers" using ("customerId")
-        WHERE "customers"."username" = $1;
+        WHERE "customers"."username" = $1
+        ORDER BY "cartedProductId";
     `;
     const params = [user];
     const result = await db.query(sql, params);
@@ -199,9 +200,6 @@ app.get('/api/mycart/:user', async (req, res, next) => {
 app.post('/api/mycart/:cartId/:productId/:productQuantity', async (req, res, next) => {
   try {
     const { cartId, productId, quantity } = req.body;
-    if (!cartId || !productId || !quantity) {
-      throw new ClientError(400, 'username, password, and email are required fields');
-    }
     const checkCartsql = `
        SELECT *
         FROM "cartedProducts_map"
@@ -210,6 +208,15 @@ app.post('/api/mycart/:cartId/:productId/:productQuantity', async (req, res, nex
     const checkCartParams = [productId, cartId];
     const checkCartresult = await db.query(checkCartsql, checkCartParams);
     if (checkCartresult.rows.length > 0) {
+      if (Number(checkCartresult.rows[0].productQuantity) + Number(quantity) <= 5) {
+        const updateSql = `
+        UPDATE "cartedProducts_map"
+        SET "productQuantity" = "productQuantity" + $3
+        WHERE "productId" = $1 AND "cartId" = $2;
+        `;
+        const updateCartParams = [productId, cartId, quantity];
+        await db.query(updateSql, updateCartParams);
+      }
       throw new ClientError(400, 'You can only buy 5 of each item per order!');
     }
 
@@ -227,6 +234,26 @@ app.post('/api/mycart/:cartId/:productId/:productQuantity', async (req, res, nex
   }
 });
 
+app.post('/api/mycart/update', async (req, res, next) => {
+  try {
+    const { cartId, productId, quantity } = req.body;
+    const sql = `
+        UPDATE "cartedProducts_map"
+        SET "productQuantity" = $3
+        WHERE "productId" = $1 AND "cartId" = $2;
+    `;
+    const updateCartParams = [productId, cartId, quantity];
+    await db.query(sql, updateCartParams);
+    if (!res) {
+      throw new ClientError(400, 'You can only buy 5 of each item per order!');
+    }
+    const row = res.rows;
+    res.status(201).json(row);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/api/remove/:cartId/:productId', async (req, res, next) => {
   try {
     const { cartId, productId } = req.body;
@@ -239,6 +266,22 @@ app.post('/api/remove/:cartId/:productId', async (req, res, next) => {
         WHERE "cartedProducts_map"."cartId" = $1 AND "cartedProducts_map"."productId" = $2;
     `;
     const params = [cartId, productId];
+    const result = await db.query(sql, params);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/checkout/clearcart', async (req, res, next) => {
+  try {
+    const { cartId } = req.body;
+    const sql = `
+          DELETE
+            FROM  "cartedProducts_map"
+            WHERE "cartedProducts_map"."cartId" = $1;
+        `;
+    const params = [cartId];
     const result = await db.query(sql, params);
     res.json(result);
   } catch (err) {

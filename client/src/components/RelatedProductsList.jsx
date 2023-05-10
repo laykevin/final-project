@@ -45,7 +45,7 @@ function Product({ product }) {
     <li className="catalog-products list-group-item shadow-sm">
       <Link className="catalog-products" style={{ textDecoration: 'none' }} to={`/details/${productId}`}>
         <img className="catalog-img img-fluid" src={image} alt={productName} />
-        <div className="catalog-info">
+        <div className="catalog-info text-white">
           <h5>{productName}</h5>
           <p>{`$${Number(price).toFixed(2)/100}`}</p>
         </div>
