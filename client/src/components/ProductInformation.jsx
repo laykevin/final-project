@@ -95,7 +95,7 @@ export default function ProductInformation() {
               <h2>{productName}</h2>
               <h5 className="text-secondary">{`$${Number(price).toFixed(2)/100}`}</h5>
               <p>{description}</p>
-              <QuantityCounter quantity={quantity} setQuantity={setQuantity} style={{ backgroundColor: 'rgb(175, 175, 175, 0.8)' }} />
+              <QuantityCounter quantity={quantity} setQuantity={setQuantity} bgColor={'grey'} style={{ backgroundColor: 'rgb(175, 175, 175, 0.8)' }} />
               <Link to="/mycart">
                 <button onClick={addToCart} className=" add-cart-button btn btn-success my-2 my-sm-0" >Add to cart</button>
               </Link>
