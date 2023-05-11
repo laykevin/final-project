@@ -3,6 +3,9 @@ import AppContext from './AppContext';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import RelatedProducts from './RelatedProducts';
+import LoadingSpinner from './LoadingSpinner';
+import QuantityCounter from './QuantityCounter';
+
 
 export default function ProductInformation() {
   const { productId } = useParams();
@@ -49,10 +52,16 @@ export default function ProductInformation() {
     }
   }
 
+  // function incrementQuantity () {
+  //   quantity < 5 && setQuantity(Number(quantity) + 1);
+  // }
+
+  // function decrementQuantity() {
+  //   quantity > 1 && setQuantity(Number(quantity) - 1);
+  // }
+
   if (isLoading) return (
-    <div className=" container d-flex justify-content-center align-items-center black-bg-img flex-grow-1" style={{ height: "50vh" }}>
-      <span className="spinner-border text-secondary" role="status"></span>
-    </div>
+    <LoadingSpinner />
   );
 
   if (error) {
@@ -69,7 +78,7 @@ export default function ProductInformation() {
 
   return (
     <div className="container black-bg-img">
-      <div className="card shadow-sm">
+      <div className="card shadow-sm" style={{ backgroundColor: 'rgb(255, 255, 255, 0.65)' }}>
         <div className="card-body">
           <div className="row">
             <div className="col">
@@ -86,19 +95,16 @@ export default function ProductInformation() {
               <h2>{productName}</h2>
               <h5 className="text-secondary">{`$${Number(price).toFixed(2)/100}`}</h5>
               <p>{description}</p>
-              <div className="input-group">
-                <span className="input-group-text" id="basic-addon1">Quantity</span>
-                <input max="5" min="1" className="form-control" type="number" placeholder="1" value={quantity} onKeyDown={(e) => e.preventDefault()} onChange={(e) => setQuantity(e.target.value)}/>
-              </div>
+              <QuantityCounter quantity={quantity} setQuantity={setQuantity} bgColor={'grey'} style={{ backgroundColor: 'rgb(175, 175, 175, 0.8)' }} />
               <Link to="/mycart">
-                <button onClick={addToCart} className=" add-cart-button btn btn-outline-success my-2 my-sm-0" >Add to cart</button>
+                <button onClick={addToCart} className=" add-cart-button btn btn-success my-2 my-sm-0" >Add to cart</button>
               </Link>
             </div>
           </div>
         </div>
       </div>
-      <div className="card shadow-sm">
-        <div className="card-body">
+      <div className="card shadow-sm bg-opacity-0" style={{ backgroundColor: 'rgb(0, 0, 0, 0)' }}>
+        <div className="card-body text-white">
           <RelatedProducts category={category} productId={productId}/>
         </div>
       </div>

@@ -1,11 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AppContext from '../components/AppContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Checkout() {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
     !user && navigate('/signin');
     const getCatalog = async () => {
@@ -23,9 +26,13 @@ export default function Checkout() {
           throw new Error(`Network response was not OK. Status Code: ${products.status}`);
         }
         const productsData = await products.json();
+        console.log(productsData);
+        productsData.length === 0 && navigate('/mycart');
         setCart(productsData);
       } catch (err) {
         console.error(err);
+      } finally {
+        setIsLoading(false);
       }
     }
     user && getCatalog();
@@ -53,11 +60,15 @@ export default function Checkout() {
   const getTotal = () => cart.reduce((acc, item) => acc += item.price * item.productQuantity, 0);
   const getTotalQuantity = () => cart.reduce((acc, item) => acc += item.productQuantity, 0);
 
+  if (isLoading) return (
+    <LoadingSpinner />
+  );
+
   return (
   <div className="container black-bg-img text-white">
     <div className="py-5 text-center">
-        <img className="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72" />
-        <h2>Checkout form</h2>
+        {/* <img className="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72" /> */}
+        <h1>Checkout form</h1>
     </div>
       <div className="row justify-content-md-center">
         <div className="col-md-4 order-md-2 mb-4">
@@ -66,6 +77,9 @@ export default function Checkout() {
                 <span className="badge badge-secondary badge-pill">{getTotalQuantity()}</span>
             </h4>
             <ul className="list-group mb-3 sticky-top">
+            {isLoading && <div className=" container d-flex justify-content-center align-items-center" style={{ height: "10vh" }}>
+              <span className="spinner-border text-secondary" role="status"></span>
+            </div> }
               {cart.map((product) =>
               <Product
                 key={product.productId}
@@ -73,17 +87,9 @@ export default function Checkout() {
               )}
                 <li className="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
-              <strong>{`$${getTotal() / 100}`}</strong>
+              <strong>{`$${(getTotal() / 100).toFixed(2)}`}</strong>
                 </li>
             </ul>
-            <form className="card p-2">
-                <div className="input-group">
-                    <input type="text" className="form-control" placeholder="Promo code" />
-                    <div className="input-group-append">
-                        <button type="submit" className="btn btn-secondary">Redeem</button>
-                    </div>
-                </div>
-            </form>
         </div>
         <div className="col-md-5 order-md-1">
             <h4 className="mb-3">Billing address</h4>
@@ -117,7 +123,7 @@ export default function Checkout() {
                 <div className="row">
                     <div className="col-md-5 mb-3">
                         <label htmlFor="country">Country</label>
-                        <select className="custom-select d-block w-100" id="country" required>
+                        <select className="form-select d-block w-100" id="country" required>
                             <option>Choose...</option>
                             <option>United States</option>
                         </select>
@@ -125,7 +131,7 @@ export default function Checkout() {
                     </div>
                     <div className="col-md-4 mb-3">
                         <label htmlFor="state">State</label>
-                        <select className="custom-select d-block w-100" id="state" required>
+                        <select className="form-select d-block w-100" id="state" required>
                             <option>Choose...</option>
                             <option>California</option>
                         </select>
@@ -175,13 +181,15 @@ export default function Checkout() {
 
 export function Product({ product }) {
   const { productName, price, productQuantity } = product;
+
   return (
     <li className="list-group-item d-flex justify-content-between lh-condensed">
       <div>
-        <h6 className="my-0">{productName}</h6>
-        <small className="text-muted">{`Quantity: ${productQuantity}`}</small>
+        <h6>{productName}</h6>
+        <small className="text-muted d-block">{`Price: $${(price / 100).toFixed(2)}`}</small>
+        <small className="text-muted d-block">{`Quantity: ${productQuantity}`}</small>
       </div>
-      <span className="text-muted">{`$${price * productQuantity / 100}`}</span>
+      <span className="text-muted">{`$${(price * productQuantity / 100).toFixed(2)}`}</span>
     </li>
   );
 }

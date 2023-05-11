@@ -31,6 +31,7 @@ export default function SignUp () {
         console.log(result.error);
         throw new Error(result.error)
       }
+      navigate('/signin');
       console.log(result);
     } catch (err) {
       console.error(err);
@@ -40,25 +41,33 @@ export default function SignUp () {
   }
 
   return (
-    <div className="container black-bg-img text-white flex-grow-1">
-      <div className="py-5 text-center">
+    <div className="container black-bg-img flex-grow-1">
+      <div className="py-5 text-center text-white">
         <h2>Sign Up</h2>
       </div>
-      <form id="sign-up-form" className="p-5 w-50 bg-light m-auto" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="inputusername">Username</label>
-          <input required type="text" className="form-control" id="inputusername" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+      <form id="sign-up-form" className="p-4 col-md-6 col-12 bg-none m-auto" onSubmit={handleSubmit}>
+        <div className="input-group mb-3">
+          <div className="form-floating">
+            <input required type="text" className="form-control" id="inputusername" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <label htmlFor="inputusername">Username</label>
+          </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="inputEmail">Email address</label>
-          <input required type="email" className="form-control" id="inputEmail" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <div className="input-group mb-3">
+          <div className="form-floating">
+            <input required type="email" className="form-control" id="inputEmail" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <label htmlFor="inputEmail">Email address</label>
+          </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="inputPassword">Password</label>
-          <input required type="password" className="form-control" id="inputPassword" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className="input-group mb-3">
+          <div className="form-floating">
+            <input required type="password" className="form-control" id="inputPassword" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <label htmlFor="inputPassword">Password</label>
+          </div>
         </div>
-        <button type="submit" className="btn btn-primary">Sign Up</button>
-        <Link to="/signin">Already have an account? Sign In</Link>
+        <div className='d-flex justify-content-between align-items-center mt-5'>
+          <button type="submit" className="btn btn-primary">Sign Up</button>
+          <Link to="/signin">Already have an account? Sign In</Link>
+        </div>
         <p className="text-danger">{error && `⚠️${error}⚠️`}</p>
       </form>
       </div>

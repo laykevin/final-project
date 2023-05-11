@@ -22,7 +22,7 @@ CREATE TABLE "public"."products" (
 
 CREATE TABLE "public"."customers" (
 	"customerId" serial NOT NULL,
-	"username" TEXT NOT NULL,
+	"username" TEXT NOT NULL UNIQUE,
 	"hashedPassword" TEXT NOT NULL,
 	"email" TEXT NOT NULL,
 	CONSTRAINT "customers_pk" PRIMARY KEY ("customerId")
