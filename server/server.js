@@ -40,6 +40,7 @@ app.get('/api/products', async (req, res, next) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err);
+    next(err);
   }
 });
 
@@ -67,6 +68,7 @@ app.get('/api/products/details/:category/:productId', async (req, res, next) => 
     res.json(result.rows);
   } catch (err) {
     console.error(err);
+    next(err);
   }
 });
 
@@ -127,7 +129,6 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
         values ($1)
         returning "cartId", "customerId"
     `;
-    console.log(user.customerId);
     const params2 = [user.customerId];
     const result2 = await db.query(sql2, params2);
     const [cart] = result2.rows;
@@ -171,9 +172,9 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
-app.get('/api/mycart/:user', async (req, res, next) => {
+app.get('/api/mycart/:customerId', async (req, res, next) => {
   try {
-    const user = req.params.user;
+    const user = req.params.customerId;
     if (!user) {
       throw new ClientError(400, 'productId must be a positive integer');
     }
@@ -183,7 +184,7 @@ app.get('/api/mycart/:user', async (req, res, next) => {
         JOIN "cartedProducts_map" using ("productId")
         JOIN "carts" using ("cartId")
         JOIN "customers" using ("customerId")
-        WHERE "customers"."username" = $1
+        WHERE "customers"."customerId" = $1
         ORDER BY "cartedProductId";
     `;
     const params = [user];
@@ -197,7 +198,7 @@ app.get('/api/mycart/:user', async (req, res, next) => {
   }
 });
 
-app.post('/api/mycart/:cartId/:productId/:productQuantity', async (req, res, next) => {
+app.post('/api/mycart/addtocart', async (req, res, next) => {
   try {
     const { cartId, productId, quantity } = req.body;
     const checkCartsql = `
@@ -215,7 +216,8 @@ app.post('/api/mycart/:cartId/:productId/:productQuantity', async (req, res, nex
         WHERE "productId" = $1 AND "cartId" = $2;
         `;
         const updateCartParams = [productId, cartId, quantity];
-        await db.query(updateSql, updateCartParams);
+        const updated = await db.query(updateSql, updateCartParams);
+        res.status(201).json(updated);
       }
       throw new ClientError(400, 'You can only buy 5 of each item per order!');
     }
@@ -254,20 +256,32 @@ app.post('/api/mycart/update', async (req, res, next) => {
   }
 });
 
-app.post('/api/remove/:cartId/:productId', async (req, res, next) => {
+app.post('/api/remove', async (req, res, next) => {
   try {
-    const { cartId, productId } = req.body;
+    const { cartId, productId, customerId } = req.body;
     if (!cartId || !productId) {
       throw new ClientError(400, 'username, password, and email are required fields');
     }
     const sql = `
-           DELETE
-        FROM  "cartedProducts_map"
-        WHERE "cartedProducts_map"."cartId" = $1 AND "cartedProducts_map"."productId" = $2;
-    `;
-    const params = [cartId, productId];
+      WITH deleted_rows AS (
+        DELETE FROM "cartedProducts_map"
+        WHERE "cartId" = $1 AND "productId" = $2
+        RETURNING *
+      )
+      SELECT *
+      FROM "products"
+      JOIN "cartedProducts_map" USING ("productId")
+      JOIN "carts" USING ("cartId")
+      JOIN "customers" USING ("customerId")
+      WHERE "customers"."customerId" = $3
+        AND "cartedProducts_map"."cartedProductId" NOT IN (
+          SELECT "cartedProductId" FROM deleted_rows
+        )
+      ORDER BY "cartedProducts_map"."cartedProductId";
+      `;
+    const params = [cartId, productId, customerId];
     const result = await db.query(sql, params);
-    res.json(result);
+    res.json(result.rows);
   } catch (err) {
     next(err);
   }
@@ -289,7 +303,7 @@ app.post('/api/checkout/clearcart', async (req, res, next) => {
   }
 });
 
-app.post('/api/checkout/:cartId', async (req, res, next) => {
+app.post('/api/checkout/order', async (req, res, next) => {
   try {
     const { cartId } = req.body;
     if (!cartId) {
@@ -340,6 +354,7 @@ app.get('/api/orderhistory/:customerId', async (req, res, next) => {
         FROM "orderedProducts_map"
         JOIN "orders" using ("orderId")
         WHERE "customerId" = $1
+        ORDER BY "orderId" DESC;
     `;
     const params = [customerId];
     const result = await db.query(sql, params);

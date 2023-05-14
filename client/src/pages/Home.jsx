@@ -1,5 +1,5 @@
-import Carousel from '../components/Carousel'
-import CatalogList from '../components/CatalogList';
+import { Carousel, CatalogList } from "../components";
+
 const newItems = [{
   name: 'Feather',
   id: 12,
@@ -33,9 +33,9 @@ const hotItems = [{
 }
 ];
 
-export default function Home() {
+export function Home() {
   return (
-    <div className="container black-bg-img">
+    <div className="container black-bg-img flex-grow-1">
       <h1 className="text-white text-center">Welcome to Mario Mart!</h1>
       <Carousel images={newItems}/>
       <hr className="text-white" />

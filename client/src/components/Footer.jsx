@@ -1,6 +1,6 @@
 import './Carousel.css'
 
-export default function Footer () {
+export function Footer () {
   return (
     <footer className="page-footer font-small blue pt-4 black-bg-img">
     <div className="container-fluid text-center text-md-left text-white">

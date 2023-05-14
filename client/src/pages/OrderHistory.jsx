@@ -1,19 +1,18 @@
 import { useState, useEffect, useContext } from "react"
 import { useNavigate } from "react-router-dom";
-import AppContext from "../components/AppContext";
 import { Product } from "./Checkout";
+import { AppContext, getTotalPrice, getTotalQuantity, getOrderIds, getProductsByOrderId, getFormattedDate } from "../lib";
+import { LoadingSpinner } from "../components";
 
-export default function OrderHistory () {
+export function OrderHistory () {
   const [orderHistory, setOrderHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true)
-  // const [total, setTotal] = useState(0);
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
 
   useEffect(() => {
     !user && navigate('/signin');
     const getOrderHistory = async () => {
-      console.log(user.customerId)
       try {
         const token = localStorage.getItem('react-context-jwt')
         const req = {
@@ -37,42 +36,22 @@ export default function OrderHistory () {
     }
     user && getOrderHistory();
   }, [navigate, user]);
-  console.log(orderHistory);
-  // let orderTotal = 0;
-  function getOrderIds () {
-    const orderIds = []
-    orderHistory.forEach((product) => {
-      if (!orderIds.includes(product.orderId)) {
-        orderIds.push(product.orderId);
-      }
-    })
-    return orderIds;
-  }
-
-  function getProductsByOrderId (orderId) {
-    return orderHistory.filter((product) => product.orderId === orderId)
-  }
-
-  // const getTotal = () => cart.reduce((acc, item) => acc += item.price * item.productQuantity, 0)
 
   if (isLoading) return (
-    <div className=" container d-flex justify-content-center align-items-center black-bg-img flex-grow-1" style={{ height: "50vh" }}>
-      <span className="spinner-border text-secondary" role="status"></span>
-    </div>
+    <LoadingSpinner />
   );
   return (
     <div className="container black-bg-img text-white flex-grow-1 pb-5">
-      <div className="py-5 text-center">
-        {/* <img className="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72" /> */}
-        <h2>Order History</h2>
+      <div className="my-4 text-center">
+        <h1>Order History</h1>
       </div>
       <div className="accordion accordion-flush col-12 col-md-8 m-auto" id="accordionOrderHistory">
         {
-        getOrderIds().map((orderId) =>
+        getOrderIds(orderHistory).map((orderId) =>
           <Accordion
             key={orderId}
             uniqueId={orderId}
-            orderHistory={getProductsByOrderId(orderId)} />
+            orderHistory={getProductsByOrderId(orderHistory, orderId)} />
         )}
       </div>
     </div>
@@ -80,9 +59,6 @@ export default function OrderHistory () {
 }
 
 function Accordion ({uniqueId, orderHistory}) {
-  const getTotal = () => orderHistory.reduce((acc, item) => acc += item.price * item.productQuantity, 0)
-  const getTotalQuantity = () => orderHistory.reduce((acc, item) => acc += item.productQuantity, 0);
-  const getFormattedDate = (dateString) => (new Date(dateString)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
     <div className="accordion-item">
@@ -105,11 +81,11 @@ function Accordion ({uniqueId, orderHistory}) {
           )}
             <li className="list-group-item d-flex justify-content-between">
               <span>Number of items</span>
-              <strong>{`${getTotalQuantity()}`}</strong>
+              <strong>{`${getTotalQuantity(orderHistory)}`}</strong>
             </li>
             <li className="list-group-item d-flex justify-content-between">
               <span>Total (USD)</span>
-              <strong>{`$${(getTotal() / 100).toFixed(2)}`}</strong>
+              <strong>{`$${getTotalPrice(orderHistory)}`}</strong>
             </li>
           </ul>
         </div>

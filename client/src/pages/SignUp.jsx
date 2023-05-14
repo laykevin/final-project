@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import AppContext from '../components/AppContext';
+import { AppContext } from '../lib';
 
-export default function SignUp () {
+export function SignUp () {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,11 +24,9 @@ export default function SignUp () {
         },
         body: JSON.stringify({ username, password, email}),
       };
-      console.log(req);
       const res = await fetch('/api/auth/sign-up', req);
       const result = await res.json();
       if (!res.ok) {
-        console.log(result.error);
         throw new Error(result.error)
       }
       navigate('/signin');

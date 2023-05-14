@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './ProductInformation.css'
 import { HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineChevronUp, HiOutlineChevronDown } from 'react-icons/hi'
 
-export default function RelatedProductsList({ related, productId }) {
+export function RelatedProductsList({ related, productId }) {
   const [page, setPage] = useState(0)
 
   const showThree = related.slice(page, page + 3);
@@ -43,7 +43,7 @@ function Product({ product }) {
   const { productName, price, image, productId } = product;
   return (
     <li className="catalog-products list-group-item shadow-sm">
-      <Link className="catalog-products" style={{ textDecoration: 'none' }} to={`/details/${productId}`}>
+      <Link className="catalog-products" style={{ textDecoration: 'none' }} to={`/details/${productId}`} reloadDocument={true}>
         <img className="catalog-img img-fluid" src={image} alt={productName} />
         <div className="catalog-info text-white">
           <h5>{productName}</h5>

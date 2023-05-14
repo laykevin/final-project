@@ -1,9 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
-import AppContext from './AppContext';
-import QuantityCounter from './QuantityCounter';
+import { AppContext } from '../lib';
+import { QuantityCounter } from '../components';
 
-export default function MyCartList({ mycart }) {
+export function MyCartList({ mycart, setCart }) {
 
   return (
     <div className="">
@@ -11,6 +10,7 @@ export default function MyCartList({ mycart }) {
         mycart.map((product) =>
           <Product
             key={product.productId}
+            setCart={setCart}
             product={product} />
         )
       }
@@ -18,11 +18,12 @@ export default function MyCartList({ mycart }) {
   );
 }
 
-function Product({ product }) {
+function Product({ product, setCart }) {
   const { productName, price, image, productQuantity, description, productId } = product;
   const [quantity, setQuantity] = useState(productQuantity);
   const { user } = useContext(AppContext);
-  const navigate = useNavigate();
+
+  const customerId = user.customerId;
 
   async function removeFromCart() {
     try {
@@ -34,14 +35,13 @@ function Product({ product }) {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cartId, productId }),
+        body: JSON.stringify({ cartId, productId, customerId }),
       };
-      console.log(cartId, productId);
-      const res = await fetch(`/api/remove/${cartId}/${productId}`, req);
+      const res = await fetch('/api/remove', req);
       if (!res.ok) throw new Error(`fetch Error ${res.status}`);
-      const result = await res.json();
-      console.log(result);
-      navigate(0);
+      setCart(prev => prev.filter((cartedProduct) =>
+      cartedProduct.cartedProductId !== product.cartedProductId
+      ));
     } catch (err) {
       console.error(err);
     }
@@ -59,10 +59,13 @@ function Product({ product }) {
         },
         body: JSON.stringify({ cartId, productId, quantity }),
       };
-      console.log(cartId, productId);
       const res = await fetch('/api/mycart/update', req);
       if (!res.ok) throw new Error(`fetch Error ${res.status}`);
-      navigate(0);
+      setCart(prev => prev.map((cartedProduct) =>
+        cartedProduct.cartedProductId === product.cartedProductId
+          ? {...product, productQuantity: quantity }
+          : cartedProduct
+      ));
     } catch (err) {
       console.error(err);
     }
@@ -72,10 +75,6 @@ function Product({ product }) {
     <div className="container">
       <div className="card shadow-sm mb-3">
         <div className="card-body pb-0">
-          <div className="row">
-            <div className="col">
-            </div>
-          </div>
           <div className="row mb-4">
             <div className="col-12 col-sm-6 col-md-5">
               <img src={image} alt={productName} className="cart-image" />

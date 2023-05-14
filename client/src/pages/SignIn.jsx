@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import AppContext from '../components/AppContext';
+import { AppContext } from '../lib';
 
-export default function SignIn( {onSignIn} ) {
+export function SignIn( {onSignIn} ) {
   const [username, setUsername] = useState('');
   const [error, setError] = useState();
   const [password, setPassword] = useState('');
@@ -23,12 +23,10 @@ export default function SignIn( {onSignIn} ) {
         },
         body: JSON.stringify({ username, password }),
       };
-      console.log(req);
       const res = await fetch('/api/auth/sign-in', req);
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
       onSignIn(result);
-      console.log(result);
     } catch (err) {
       setError(err.message);
       console.error(err);

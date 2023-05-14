@@ -1,7 +1,7 @@
 import './CatalogList.css'
 import { Link } from 'react-router-dom';
 
-export default function CatalogList({ catalog, searchBy, filterBy, sortBy }) {
+export function CatalogList({ catalog, searchBy, filterBy, sortBy }) {
   let catalogCopy = [...catalog];
   const sortByPriceDesc = (filteredList) => filteredList.sort((first, second) => second.price - first.price);
   const sortByPriceAsc = (filteredList) => filteredList.sort((first, second) => first.price - second.price);
@@ -36,7 +36,7 @@ export default function CatalogList({ catalog, searchBy, filterBy, sortBy }) {
     );
 }
 
-function Product({ product }) {
+export function Product({ product }) {
   const { productName, price, image, productId } = product;
   return (
       <li className="catalog-products shadow-sm">
