@@ -5,7 +5,7 @@ import { QuantityCounter } from '../components';
 export function MyCartList({ mycart, setCart }) {
 
   return (
-    <div className="">
+    <>
       {
         mycart.map((product) =>
           <Product
@@ -14,7 +14,7 @@ export function MyCartList({ mycart, setCart }) {
             product={product} />
         )
       }
-    </div>
+    </>
   );
 }
 
@@ -22,8 +22,6 @@ function Product({ product, setCart }) {
   const { productName, price, image, productQuantity, description, productId } = product;
   const [quantity, setQuantity] = useState(productQuantity);
   const { user } = useContext(AppContext);
-
-  const customerId = user.customerId;
 
   async function removeFromCart() {
     try {
@@ -35,7 +33,7 @@ function Product({ product, setCart }) {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cartId, productId, customerId }),
+        body: JSON.stringify({ cartId, productId }),
       };
       const res = await fetch('/api/remove', req);
       if (!res.ok) throw new Error(`fetch Error ${res.status}`);
@@ -74,7 +72,7 @@ function Product({ product, setCart }) {
   return (
     <div className="container">
       <div className="card shadow-sm mb-3">
-        <div className="card-body pb-0">
+        <div className="card-body bg-light pb-0">
           <div className="row mb-4">
             <div className="col-12 col-sm-6 col-md-5">
               <img src={image} alt={productName} className="cart-image" />

@@ -75,8 +75,8 @@ app.get('/api/products/details/:category/:productId', async (req, res, next) => 
 app.get('/api/products/:productId', async (req, res, next) => {
   try {
     const productId = Number(req.params.productId);
-    if (!productId) {
-      throw new ClientError(400, 'productId must be a positive integer');
+    if (!productId || (productId < 1 || productId > 36)) {
+      throw new ClientError(400, 'productId must be a positive integer between 1 and 36');
     }
     const sql = `
       select "productId",
@@ -95,6 +95,7 @@ app.get('/api/products/:productId', async (req, res, next) => {
     }
     res.json(result.rows[0]);
   } catch (err) {
+    console.error(err.message);
     next(err);
   }
 });
@@ -110,7 +111,7 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
         FROM "customers"
         WHERE "username" = $1
     `;
-    const selectUsernameSqlParams = [username];
+    const selectUsernameSqlParams = [username.toLowerCase()];
     const usernameResult = await db.query(selectUsernameSql, selectUsernameSqlParams);
     if (usernameResult.rows.length > 0) {
       throw new ClientError(400, 'Username already exists');
@@ -121,7 +122,7 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
         values ($1, $2, $3)
         returning "customerId", "username", "email"
     `;
-    const params = [username, hashedPassword, email];
+    const params = [username.toLowerCase(), hashedPassword, email];
     const result = await db.query(sql, params);
     const [user] = result.rows;
     const sql2 = `
@@ -142,7 +143,7 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      throw new ClientError(401, 'invalid login');
+      throw new ClientError(401, 'Username and Password are required fields!');
     }
     const sql = `
       select "customerId",
@@ -152,15 +153,15 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
         JOIN "carts" using ("customerId")
       where "username" = $1
     `;
-    const params = [username];
+    const params = [username.toLowerCase()];
     const result = await db.query(sql, params);
     const [user] = result.rows;
     if (!user) {
-      throw new ClientError(401, 'invalid login');
+      throw new ClientError(401, 'Username and Password do not match!');
     }
     const { customerId, hashedPassword, cartId } = user;
     if (!await argon2.verify(hashedPassword, password)) {
-      throw new ClientError(401, 'invalid login');
+      throw new ClientError(401, 'Username and Password do not match!');
     }
     const payload = { customerId, username, cartId };
     const token = jwt.sign(payload, process.env.TOKEN_SECRET);
@@ -175,9 +176,6 @@ app.use(authorizationMiddleware);
 app.get('/api/mycart/:customerId', async (req, res, next) => {
   try {
     const user = req.params.customerId;
-    if (!user) {
-      throw new ClientError(400, 'productId must be a positive integer');
-    }
     const sql = `
       SELECT *
         FROM "products"
@@ -185,22 +183,23 @@ app.get('/api/mycart/:customerId', async (req, res, next) => {
         JOIN "carts" using ("cartId")
         JOIN "customers" using ("customerId")
         WHERE "customers"."customerId" = $1
-        ORDER BY "cartedProductId";
+        ORDER BY "cartedProductId" DESC;
     `;
     const params = [user];
     const result = await db.query(sql, params);
     if (!result.rows) {
-      throw new ClientError(404, `cannot find product with productId ${user}`);
+      throw new ClientError(404, `Cannot find cart of customerId: ${user}`);
     }
     res.json(result.rows);
   } catch (err) {
+    console.error(err);
     next(err);
   }
 });
 
 app.post('/api/mycart/addtocart', async (req, res, next) => {
   try {
-    const { cartId, productId, quantity } = req.body;
+    const { cartId, productId, quantity, productName } = req.body;
     const checkCartsql = `
        SELECT *
         FROM "cartedProducts_map"
@@ -219,7 +218,7 @@ app.post('/api/mycart/addtocart', async (req, res, next) => {
         const updated = await db.query(updateSql, updateCartParams);
         res.status(201).json(updated);
       }
-      throw new ClientError(400, 'Limit 5 of each item per order!');
+      throw new ClientError(400, `Limit 5 ${productName} per order!`);
     }
 
     const sql = `
@@ -239,6 +238,9 @@ app.post('/api/mycart/addtocart', async (req, res, next) => {
 app.post('/api/mycart/update', async (req, res, next) => {
   try {
     const { cartId, productId, quantity } = req.body;
+    if (!cartId || !productId || !quantity) {
+      throw new ClientError(400, 'Missing cartId, productId, or quantity.');
+    }
     const sql = `
         UPDATE "cartedProducts_map"
         SET "productQuantity" = $3
@@ -246,11 +248,7 @@ app.post('/api/mycart/update', async (req, res, next) => {
     `;
     const updateCartParams = [productId, cartId, quantity];
     await db.query(sql, updateCartParams);
-    if (!res) {
-      throw new ClientError(400, 'You can only buy 5 of each item per order!');
-    }
-    const row = res.rows;
-    res.status(201).json(row);
+    res.sendStatus(201);
   } catch (err) {
     next(err);
   }
@@ -258,30 +256,17 @@ app.post('/api/mycart/update', async (req, res, next) => {
 
 app.post('/api/remove', async (req, res, next) => {
   try {
-    const { cartId, productId, customerId } = req.body;
+    const { cartId, productId } = req.body;
     if (!cartId || !productId) {
-      throw new ClientError(400, 'username, password, and email are required fields');
+      throw new ClientError(400, 'Missing cart or product ids.');
     }
     const sql = `
-      WITH deleted_rows AS (
         DELETE FROM "cartedProducts_map"
-        WHERE "cartId" = $1 AND "productId" = $2
-        RETURNING *
-      )
-      SELECT *
-      FROM "products"
-      JOIN "cartedProducts_map" USING ("productId")
-      JOIN "carts" USING ("cartId")
-      JOIN "customers" USING ("customerId")
-      WHERE "customers"."customerId" = $3
-        AND "cartedProducts_map"."cartedProductId" NOT IN (
-          SELECT "cartedProductId" FROM deleted_rows
-        )
-      ORDER BY "cartedProducts_map"."cartedProductId";
+        WHERE "cartId" = $1 AND "productId" = $2;
       `;
-    const params = [cartId, productId, customerId];
-    const result = await db.query(sql, params);
-    res.json(result.rows);
+    const params = [cartId, productId];
+    await db.query(sql, params);
+    res.sendStatus(201);
   } catch (err) {
     next(err);
   }

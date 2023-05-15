@@ -73,7 +73,7 @@ export function MyCart() {
         {cart.length > 0 &&
         <div className="col-md-3 order-md-2 mb-4">
           <ul className="list-group mb-3 sticky-top">
-            <li className="list-group-item">
+            <li className="list-group-item bg-light">
               <span className="d-flex flex-wrap justify-content-between">
                 <span>Number of Items</span>
                 <strong>{getTotalQuantity(cart)}</strong>

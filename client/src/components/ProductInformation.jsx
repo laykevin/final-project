@@ -2,7 +2,7 @@ import { useEffect, useState, useContext, useRef } from 'react';
 import { AppContext } from '../lib';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { HiOutlineChevronRight } from 'react-icons/hi'
+import { HiOutlineChevronRight, HiOutlineChevronLeft } from 'react-icons/hi'
 // import { AiOutlineCheckCircle } from 'react-icons/ai'
 import { RelatedProducts, LoadingSpinner, QuantityCounter } from '../components'
 
@@ -33,7 +33,6 @@ export function ProductInformation() {
       } catch (err) {
         setError(err);
       } finally {
-        console.log(1);
         setIsLoading(false);
         setQuantity(1);
         setAddedToCart(false);
@@ -46,7 +45,9 @@ export function ProductInformation() {
 
 
   async function addToCart () {
+    !user && navigate('/signin');
     setButtonLoading(true);
+    const productName = product.productName;
     try {
       const token = localStorage.getItem('react-context-jwt')
       const cartId = user.cartId;
@@ -56,7 +57,7 @@ export function ProductInformation() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cartId, productId, quantity }),
+        body: JSON.stringify({ cartId, productId, quantity, productName }),
       };
       const res = await fetch('/api/mycart/addtocart', req);
       if (!res.ok) {
@@ -91,26 +92,16 @@ export function ProductInformation() {
     <LoadingSpinner />
   );
 
-  // if (error) {
-  //   return (
-  //     <div className= "container text-white black-bg-img flex-grow-1">
-  //       Error Loading Product {productId}: {error}
-  //     </div>
-  //   );
-  // }
-
-  if (!product) return null;
-
   const { productName, image, price, description, category } = product;
 
   return (
     <div className="container black-bg-img flex-grow-1">
-      <div className="card shadow-sm" style={{ backgroundColor: 'rgb(255, 255, 255, 0.65)' }}>
+      <div className="card shadow-sm mt-2" style={{ backgroundColor: 'rgb(1, 1, 1, 0.4)' }}>
         <div className="card-body">
           <div className="row">
             <div className="col">
-              <Link className="btn text-secondary" to="/catalog">
-                &lt; Back to catalog
+              <Link className="btn btn-outline-light" to="/catalog">
+                <HiOutlineChevronLeft /> Back to Items
               </Link>
             </div>
           </div>
@@ -118,7 +109,7 @@ export function ProductInformation() {
             <div className="col-12 col-sm-6 col-md-5">
               <img src={image} alt={productName} className="image" />
             </div>
-            <div className="col-12 col-sm-6 col-md-7">
+            <div className="col-12 col-sm-6 col-md-7 text-white">
               <h2>{productName}</h2>
               <h5 className="text-secondary">{`$${Number(price).toFixed(2)/100}`}</h5>
               <p>{description}</p>
@@ -131,7 +122,7 @@ export function ProductInformation() {
                       Go to My Kart <HiOutlineChevronRight />
                     </button>
                   </Link>
-                : <button onClick={addToCart} className="add-cart-button btn btn-success my-2 my-sm-0" disabled={buttonLoading}>
+                : <button onClick={addToCart} className="add-cart-button btn btn-primary my-2 my-sm-0" disabled={buttonLoading}>
                     {buttonLoading
                       ? <span className="spinner-border spinner-border-sm text-secondary" role="status"></span>
                       : 'Add to cart'

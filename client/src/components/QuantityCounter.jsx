@@ -4,7 +4,7 @@ export function QuantityCounter ({ quantity, setQuantity, bgColor, disable }) {
   return (
     <div className="border border-secondary d-inline-block p-3 position-relative rounded mt-3">
       <div className="input-group position-absolute top-0 start-0 translate-middle-y ms-3 d-flex">
-        <small title="Limit: 5" className="fw-bold text-uppercase m-1 pt-1" style={{ lineHeight: '1.1rem', backgroundColor: bgColor ? 'rgb(175, 175, 175, 0.8)' : 'white' }}>
+        <small title="Limit: 5" className="fw-bold text-uppercase m-1 pt-1" style={{ lineHeight: '1.1rem', backgroundColor: bgColor ? 'rgb(0, 0, 0, 0.4)' : 'white' }}>
           Quantity
           <small className="d-block fw-normal mb-2" style={{ lineHeight: '0.5rem' }}>(Limit: 5)</small>
         </small>

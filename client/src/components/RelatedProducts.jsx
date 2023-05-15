@@ -32,7 +32,7 @@ export function RelatedProducts({ category, productId }) {
 
   return (
     <>
-      <h3 className="related-h3">Related Products</h3>
+      <h3 className="related-h3 mb-4">Related Products</h3>
       <RelatedProductsList related={related} productId={productId}/>
     </>
   )
