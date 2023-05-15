@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import RelatedProductsList from './RelatedProductsList';
+import { RelatedProductsList, LoadingSpinner } from '../components';
+import { randomize } from '../lib';
 
-export default function RelatedProducts({ category, productId }) {
+export function RelatedProducts({ category, productId }) {
   const [related, setRelated] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const categoryArray = category.split(' ');
@@ -25,26 +26,13 @@ export default function RelatedProducts({ category, productId }) {
     getRelated();
   }, [firstCategory,productId])
 
-  function randomize(values) {
-    let index = values.length,
-      randomIndex;
-    while (index !== 0) {
-      randomIndex = Math.floor(Math.random() * index);
-      index--;
-      [values[index], values[randomIndex]] = [values[randomIndex], values[index]];
-    }
-    return values;
-  }
-
   if (isLoading) return (
-      <div className=" container d-flex justify-content-center align-items-center" style={{ height: "30vh" }}>
-        <span className="spinner-border text-secondary" role="status"></span>
-      </div>
+    <LoadingSpinner viewHeight={'30vh'} />
   );
 
   return (
     <>
-      <h3 className="related-h3">Related Products</h3>
+      <h3 className="related-h3 mb-4">Related Products</h3>
       <RelatedProductsList related={related} productId={productId}/>
     </>
   )

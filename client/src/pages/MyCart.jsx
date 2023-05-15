@@ -1,12 +1,10 @@
 import { useState, useEffect, useContext } from "react"
 import { Link, useNavigate } from "react-router-dom";
-import AppContext from "../components/AppContext"
-import MyCartList from "../components/MyCartList";
-import LoadingSpinner from "../components/LoadingSpinner";
 import { HiOutlineChevronLeft } from 'react-icons/hi'
+import { getTotalPrice, getTotalQuantity, AppContext } from "../lib";
+import { MyCartList, LoadingSpinner } from "../components";
 
-
-export default function MyCart() {
+export function MyCart() {
   const [cart, setCart] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -24,7 +22,7 @@ export default function MyCart() {
             'Content-Type': 'application/json',
           }
         };
-        const products = await fetch(`/api/mycart/${user.username}`, req);
+        const products = await fetch(`/api/mycart/${user.customerId}`, req);
         if (!products.ok) {
           throw new Error(`Network response was not OK. Status Code: ${products.status}`);
         }
@@ -38,9 +36,6 @@ export default function MyCart() {
     }
     user && getCart();
   },[user, navigate]);
-
-  const getTotal = () => cart.reduce((acc, item) => acc += item.price * item.productQuantity, 0 )
-  const getTotalQuantity = () => cart.reduce((acc, item) => acc += item.productQuantity, 0);
 
   async function removeCart() {
     try {
@@ -58,7 +53,6 @@ export default function MyCart() {
       if (!res.ok) throw new Error(`fetch Error ${res.status}`);
       setCart([]);
     } catch (err) {
-      ;
       console.error(err);
     }
   }
@@ -66,11 +60,7 @@ export default function MyCart() {
   if (isLoading) return (
     <LoadingSpinner />
   );
-  // if (cart.length === 0) return (
-  //   <div className="container text-white black-bg-img flex-grow-1">
-  //     <h2>Your Kart is empty!</h2>
-  //   </div>
-  // )
+
   return (
     <div className="container text-white black-bg-img flex-grow-1">
       <div className="d-flex justify-content-between my-4 position-relative">
@@ -83,34 +73,34 @@ export default function MyCart() {
         {cart.length > 0 &&
         <div className="col-md-3 order-md-2 mb-4">
           <ul className="list-group mb-3 sticky-top">
-            <li className="list-group-item">
+            <li className="list-group-item bg-light">
               <span className="d-flex flex-wrap justify-content-between">
                 <span>Number of Items</span>
-                <strong>{getTotalQuantity()}</strong>
+                <strong>{getTotalQuantity(cart)}</strong>
               </span>
               <hr />
               <span className="d-flex flex-wrap justify-content-between">
                 <span>Total (USD)</span>
-                <strong>{`$${(getTotal() / 100).toFixed(2)}`}</strong>
+                <strong>{`$${getTotalPrice(cart)}`}</strong>
               </span>
               <hr />
               <Link to="/checkout" className="w-100">
                 <button className="btn btn-primary w-100 mb-2">Checkout</button>
               </Link>
               {/* <!-- Button trigger modal --> */}
-              <button type="button" className="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Empty Cart
+                <button type="button" className="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#confirmRemoveModal">
+                Empty Kart
               </button>
             </li>
           </ul>
         </div>}
           <div className="col-md-8 order-md-1">
-            {cart.length === 0 && <h1 className="text-center mt-5">Your Kart is empty!</h1> }
-            {user && <MyCartList mycart={cart} />}
+            {cart.length === 0 && <h2 className="text-center mt-5">Your Kart is empty!</h2> }
+            {user && <MyCartList mycart={cart} setCart={setCart} />}
           </div>
       </div>
       {/* <!-- Modal --> */}
-      <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal fade" id="confirmRemoveModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content" style={{ marginBottom: '12rem'}}>
             <div className="modal-header border-0">

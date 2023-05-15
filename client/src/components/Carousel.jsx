@@ -3,7 +3,7 @@ import { RxDot, RxDotFilled } from 'react-icons/rx';
 import './Carousel.css';
 import { Link } from "react-router-dom";
 
-export default function Carousel({ images }) {
+export function Carousel({ images }) {
   const [current, setCurrent] = useState(0);
 
   const handleRightButton = useCallback(() => setCurrent((current + 1) % images.length), [current, images]);
@@ -38,7 +38,7 @@ export default function Carousel({ images }) {
   )
 }
 
-function Dot({ isActive, click }) {
+export function Dot({ isActive, click }) {
   return (
     isActive ? <button className="button-carousel">
       <RxDotFilled style={{ fontSize: "4rem" }} />

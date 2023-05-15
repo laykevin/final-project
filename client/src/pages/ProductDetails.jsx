@@ -1,7 +1,6 @@
-import ProductInformation from "../components/ProductInformation";
-// import RelatedProducts from "../components/RelatedProducts";
+import { ProductInformation } from "../components";
 
-export default function ProductDetails() {
+export function ProductDetails() {
   return (
     <>
       <ProductInformation />

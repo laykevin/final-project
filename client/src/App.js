@@ -1,19 +1,10 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import NavBar from './components/NavBar';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import jwtDecode from 'jwt-decode';
-import AppContext from './components/AppContext';
-import Catalog from './pages/Catalog';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import MyCart from './pages/MyCart';
-import ProductDetails from './pages/ProductDetails';
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
-import Checkout from './pages/Checkout';
-import OrderHistory from './pages/OrderHistory';
-import NotFound from './pages/NotFound';
+import { NavBar, Footer } from './components';
+import { Catalog, Home, MyCart, ProductDetails, SignIn, SignUp, Checkout, OrderHistory, NotFound } from './pages'
+import { AppContext } from './lib';
 
 const tokenKey = 'react-context-jwt'
 

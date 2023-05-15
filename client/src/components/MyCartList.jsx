@@ -1,28 +1,27 @@
-import { useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
-import AppContext from './AppContext';
-import QuantityCounter from './QuantityCounter';
+import { AppContext } from '../lib';
+import { QuantityCounter } from '../components';
 
-export default function MyCartList({ mycart }) {
+export function MyCartList({ mycart, setCart }) {
 
   return (
-    <div className="">
+    <>
       {
         mycart.map((product) =>
           <Product
             key={product.productId}
+            setCart={setCart}
             product={product} />
         )
       }
-    </div>
+    </>
   );
 }
 
-function Product({ product }) {
+function Product({ product, setCart }) {
   const { productName, price, image, productQuantity, description, productId } = product;
   const [quantity, setQuantity] = useState(productQuantity);
   const { user } = useContext(AppContext);
-  const navigate = useNavigate();
 
   async function removeFromCart() {
     try {
@@ -36,12 +35,11 @@ function Product({ product }) {
         },
         body: JSON.stringify({ cartId, productId }),
       };
-      console.log(cartId, productId);
-      const res = await fetch(`/api/remove/${cartId}/${productId}`, req);
+      const res = await fetch('/api/remove', req);
       if (!res.ok) throw new Error(`fetch Error ${res.status}`);
-      const result = await res.json();
-      console.log(result);
-      navigate(0);
+      setCart(prev => prev.filter((cartedProduct) =>
+      cartedProduct.cartedProductId !== product.cartedProductId
+      ));
     } catch (err) {
       console.error(err);
     }
@@ -59,10 +57,13 @@ function Product({ product }) {
         },
         body: JSON.stringify({ cartId, productId, quantity }),
       };
-      console.log(cartId, productId);
       const res = await fetch('/api/mycart/update', req);
       if (!res.ok) throw new Error(`fetch Error ${res.status}`);
-      navigate(0);
+      setCart(prev => prev.map((cartedProduct) =>
+        cartedProduct.cartedProductId === product.cartedProductId
+          ? {...product, productQuantity: quantity }
+          : cartedProduct
+      ));
     } catch (err) {
       console.error(err);
     }
@@ -71,11 +72,7 @@ function Product({ product }) {
   return (
     <div className="container">
       <div className="card shadow-sm mb-3">
-        <div className="card-body pb-0">
-          <div className="row">
-            <div className="col">
-            </div>
-          </div>
+        <div className="card-body bg-light pb-0">
           <div className="row mb-4">
             <div className="col-12 col-sm-6 col-md-5">
               <img src={image} alt={productName} className="cart-image" />
@@ -90,7 +87,11 @@ function Product({ product }) {
               <QuantityCounter quantity={quantity} setQuantity={setQuantity}/>
               <div className='d-flex flex-row-reverse justify-content-between pt-4'>
                 <button onClick={removeFromCart} className="btn btn-outline-danger my-2 my-sm-0" >Remove from cart</button>
-                {Number(productQuantity) !== Number(quantity) && <button onClick={updateCart} className="save-fade active btn btn-outline-success my-2 my-sm-0" data-mdb-animation="fade-in">UPDATE</button>}
+                {Number(productQuantity) !== Number(quantity) &&
+                <div className='d-flex align-items-center'>
+                  <button onClick={updateCart} className="save-fade active btn btn-outline-success my-2 my-sm-0" data-mdb-animation="fade-in">UPDATE</button>
+                  <button onClick={() => setQuantity(productQuantity)} type="button" className="btn-close ms-2" aria-label="Close"></button>
+                </div>}
               </div>
             </div>
           </div>

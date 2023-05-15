@@ -1,13 +1,13 @@
 import './Carousel.css'
 
-export default function Footer () {
+export function Footer () {
   return (
     <footer className="page-footer font-small blue pt-4 black-bg-img">
     <div className="container-fluid text-center text-md-left text-white">
       <div className="row">
         <div className="col-md-6 mt-md-0 mt-3">
           <h5 className="text-uppercase">Mario Mart</h5>
-          <p>Here you can use rows and columns to organize your footer content.</p>
+          <p>Your one stop shop for all things Mario Kart!</p>
         </div>
         {/* <hr className="clearfix w-100 d-md-none pb-0" />
         <div className="col-md-3 mb-md-0 mb-3">

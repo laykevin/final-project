@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import AppContext from '../components/AppContext';
+import { AppContext } from '../lib';
 
-export default function SignIn( {onSignIn} ) {
+export function SignIn( {onSignIn} ) {
   const [username, setUsername] = useState('');
   const [error, setError] = useState();
   const [password, setPassword] = useState('');
@@ -23,12 +23,10 @@ export default function SignIn( {onSignIn} ) {
         },
         body: JSON.stringify({ username, password }),
       };
-      console.log(req);
       const res = await fetch('/api/auth/sign-in', req);
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
       onSignIn(result);
-      console.log(result);
     } catch (err) {
       setError(err.message);
       console.error(err);
@@ -41,6 +39,9 @@ export default function SignIn( {onSignIn} ) {
         <h2>Please Sign In to Continue</h2>
       </div>
       <form id="sign-up-form" className="p-4 col-md-6 col-12 rounded bg-none m-auto" onSubmit={handleSubmit}>
+        <div className='text-white'>
+          <p>Username: demo<span className='d-block'>Password: 123</span></p>
+        </div>
         <div className="input-group mb-3">
           <div className="form-floating">
             <input required type="text" className="form-control" id="inputUsername" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />

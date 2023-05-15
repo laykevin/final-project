@@ -1,36 +1,29 @@
-import { Outlet, Link } from "react-router-dom"
-import AppContext from "./AppContext"
+import { Outlet, Link } from "react-router-dom";
+import { AppContext } from "../lib";
 import { useContext } from "react";
+import { FaSignOutAlt } from "react-icons/fa";
+import { GiHamburgerMenu } from "react-icons/gi";
 
-export default function NavBar () {
+export function NavBar () {
   const { user, handleSignOut } = useContext(AppContext);
   return (
     <>
       <nav className="navbar navbar-expand-lg black-bg-img">
         <div className="container">
           <Link className="navbar-brand text-white" to='/'>Mario Mart</Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span style={{ color: 'white' }} className="navbar-toggler-icon bs-"></span>
+          <button className="navbar-toggler border-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <GiHamburgerMenu style={{ color: 'white' }} />
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex">
-              <div className="d-flex">
-                {/* <li className="nav-item">
-                  <Link className="nav-link active text-white" to='/'>Home</Link>
-                </li> */}
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
                   <Link className="nav-link text-white" to="/catalog">Items</Link>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link text-white" to="/mycart">
                     My Kart
-                  {/* <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    99+
-                    <span className="visually-hidden">unread messages</span>
-                  </span> */}
                   </Link>
                 </li>
-              </div>
             </ul>
             <ul className="navbar-nav mb-2 mb-lg-0 d-flex">
               <li className="nav-item dropdown">
@@ -47,7 +40,7 @@ export default function NavBar () {
                     <li><hr className="dropdown-divider" /></li>
                   {user ?
                     <button className="dropdown-item text-danger" onClick={handleSignOut}>
-                      Sign out
+                      Sign out  <FaSignOutAlt />
                     </button>
                     :
                   <Link to="/signup" className="dropdown-item">Sign Up</Link>
