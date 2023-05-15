@@ -89,7 +89,11 @@ function Product({ product, setCart }) {
               <QuantityCounter quantity={quantity} setQuantity={setQuantity}/>
               <div className='d-flex flex-row-reverse justify-content-between pt-4'>
                 <button onClick={removeFromCart} className="btn btn-outline-danger my-2 my-sm-0" >Remove from cart</button>
-                {Number(productQuantity) !== Number(quantity) && <button onClick={updateCart} className="save-fade active btn btn-outline-success my-2 my-sm-0" data-mdb-animation="fade-in">UPDATE</button>}
+                {Number(productQuantity) !== Number(quantity) &&
+                <div className='d-flex align-items-center'>
+                  <button onClick={updateCart} className="save-fade active btn btn-outline-success my-2 my-sm-0" data-mdb-animation="fade-in">UPDATE</button>
+                  <button onClick={() => setQuantity(productQuantity)} type="button" className="btn-close ms-2" aria-label="Close"></button>
+                </div>}
               </div>
             </div>
           </div>

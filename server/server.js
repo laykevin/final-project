@@ -219,7 +219,7 @@ app.post('/api/mycart/addtocart', async (req, res, next) => {
         const updated = await db.query(updateSql, updateCartParams);
         res.status(201).json(updated);
       }
-      throw new ClientError(400, 'You can only buy 5 of each item per order!');
+      throw new ClientError(400, 'Limit 5 of each item per order!');
     }
 
     const sql = `

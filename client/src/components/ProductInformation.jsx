@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AppContext } from '../lib';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { HiOutlineChevronRight } from 'react-icons/hi'
 // import { AiOutlineCheckCircle } from 'react-icons/ai'
@@ -12,15 +12,19 @@ export function ProductInformation() {
   const [product, setProduct] = useState();
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const navigate = useNavigate();
   const { user } = useContext(AppContext);
   const popover = useRef(null);
 
   useEffect(() => {
+    (productId < 1 || productId > 36) && navigate('/catalog');
     async function loadProduct(productId) {
       try {
+        popover.current?.dispose();
+        popover.current = null;
         const productRes = await fetch(`/api/products/${productId}`);
         if (!productRes.ok) throw new Error(`This is not a shortcut`);
         const productResData = await productRes.json();
@@ -29,14 +33,16 @@ export function ProductInformation() {
       } catch (err) {
         setError(err);
       } finally {
-        // setIsLoading(false);
-        // setQuantity(1);
-        // setAddedToCart(false);
+        console.log(1);
+        setIsLoading(false);
+        setQuantity(1);
+        setAddedToCart(false);
+        setError(null);
       }
     }
     setIsLoading(true);
     loadProduct(productId);
-  }, [productId]);
+  }, [productId, navigate]);
 
 
   async function addToCart () {
@@ -66,16 +72,18 @@ export function ProductInformation() {
   }
 
   useEffect(() => {
-    if (addedToCart) {
+    if (addedToCart || error) {
       // eslint-disable-next-line no-undef
       popover.current = bootstrap.Popover.getOrCreateInstance('#addedButton');
       popover.current?.show();
     }
-  }, [addedToCart]);
+  }, [addedToCart, error]);
 
   useEffect(() => {
     return () => {
+      console.log("UNMOUNTING")
       popover.current?.dispose();
+      popover.current = null;
     }
   }, []);
 
@@ -83,13 +91,13 @@ export function ProductInformation() {
     <LoadingSpinner />
   );
 
-  if (error) {
-    return (
-      <div className= "container text-white black-bg-img flex-grow-1">
-        Error Loading Product {productId}: {error}
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className= "container text-white black-bg-img flex-grow-1">
+  //       Error Loading Product {productId}: {error}
+  //     </div>
+  //   );
+  // }
 
   if (!product) return null;
 
@@ -114,26 +122,28 @@ export function ProductInformation() {
               <h2>{productName}</h2>
               <h5 className="text-secondary">{`$${Number(price).toFixed(2)/100}`}</h5>
               <p>{description}</p>
-              <QuantityCounter quantity={quantity} setQuantity={setQuantity} bgColor={'grey'} disable={addedToCart} />
-              {addedToCart ?
-                <Link to="/mycart">
-                  <button id="addedButton" className="add-cart-button btn btn-success my-2 my-sm-0" data-bs-toggle="popover" data-bs-content={`Added ${quantity} to Kart!`} data-bs-trigger="manual" data-bs-placement="top">
-                    Go to My Kart <HiOutlineChevronRight />
+              <div className={`${buttonLoading || error ? 'pe-none' : ''}`}>
+                <QuantityCounter quantity={quantity} setQuantity={setQuantity} bgColor={'grey'} disable={addedToCart} />
+              </div>
+              {addedToCart || error
+                ? <Link to="/mycart">
+                    <button id="addedButton" className={`add-cart-button btn my-2 my-sm-0 ${error ? 'btn-danger' : 'btn-success'}`} data-bs-toggle="popover" data-bs-content={error ? `❌${error}` : `✔ Added ${quantity} to Kart!`} data-bs-trigger="manual" data-bs-placement="top">
+                      Go to My Kart <HiOutlineChevronRight />
+                    </button>
+                  </Link>
+                : <button onClick={addToCart} className="add-cart-button btn btn-success my-2 my-sm-0" disabled={buttonLoading}>
+                    {buttonLoading
+                      ? <span className="spinner-border spinner-border-sm text-secondary" role="status"></span>
+                      : 'Add to cart'
+                    }
                   </button>
-                </Link>
-              :
-                <button onClick={addToCart} className="add-cart-button btn btn-success my-2 my-sm-0" disabled={buttonLoading}>
-                  {buttonLoading
-                    ? <span className="spinner-border spinner-border-sm text-secondary" role="status"></span>
-                    : 'Add to cart'
-                  }
-                </button>}
+              }
             </div>
           </div>
         </div>
       </div>
       <div className="card shadow-sm bg-opacity-0" style={{ backgroundColor: 'rgb(0, 0, 0, 0)' }}>
-        <div className="card-body text-white">
+        <div className={`card-body text-white ${buttonLoading ? 'pe-none' : ''}`}>
           <RelatedProducts category={category} productId={productId}/>
         </div>
       </div>
