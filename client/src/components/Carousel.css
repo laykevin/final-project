@@ -79,3 +79,13 @@
     background-image: url(https://www.nintendoworldreport.com/media/39284/4/1.jpg);
   background-size: cover;
 }
+
+.footer-links {
+    color: white;
+    text-decoration: none;
+}
+
+.footer-links:hover {
+  color: grey;
+  text-decoration: underline;
+}

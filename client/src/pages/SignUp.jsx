@@ -30,10 +30,8 @@ export function SignUp () {
         throw new Error(result.error)
       }
       navigate('/signin');
-      console.log(result);
     } catch (err) {
       console.error(err);
-      console.log(err.message);
       setError(err.message);
     }
   }
