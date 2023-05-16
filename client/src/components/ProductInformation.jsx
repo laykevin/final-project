@@ -3,9 +3,7 @@ import { AppContext } from '../lib';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { HiOutlineChevronRight, HiOutlineChevronLeft } from 'react-icons/hi'
-// import { AiOutlineCheckCircle } from 'react-icons/ai'
 import { RelatedProducts, LoadingSpinner, QuantityCounter } from '../components'
-
 
 export function ProductInformation() {
   const { productId } = useParams();
@@ -29,7 +27,6 @@ export function ProductInformation() {
         if (!productRes.ok) throw new Error(`This is not a shortcut`);
         const productResData = await productRes.json();
         setProduct(productResData);
-        setIsLoading(false);
       } catch (err) {
         setError(err);
       } finally {
@@ -82,7 +79,6 @@ export function ProductInformation() {
 
   useEffect(() => {
     return () => {
-      console.log("UNMOUNTING")
       popover.current?.dispose();
       popover.current = null;
     }

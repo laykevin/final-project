@@ -73,7 +73,6 @@ function Accordion ({uniqueId, orderHistory}) {
       <div id={uniqueId} className="accordion-collapse collapse" data-bs-parent="#accordionOrderHistory">
         <div className="accordion-body">
           <ul className="list-group mb-3 sticky-top">
-
           {orderHistory.map((product) =>
             <Product
               key={product.productId}

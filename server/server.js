@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import errorMiddleware from './lib/error-middleware.js';
-import authorizationMiddleware from './lib/authorization-middleware.js';
+// import authorizationMiddleware from './lib/authorization-middleware.js';
 import pg from 'pg';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
@@ -24,6 +26,8 @@ app.use(express.static(reactStaticDir));
 // Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
+
+app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'client', 'build')));
 
 app.get('/api/products', async (req, res, next) => {
   try {
@@ -171,7 +175,8 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
   }
 });
 
-app.use(authorizationMiddleware);
+// TODO: Use express router to define auth protected endpoints
+// app.use(authorizationMiddleware);
 
 app.get('/api/mycart/:customerId', async (req, res, next) => {
   try {
@@ -350,6 +355,10 @@ app.get('/api/orderhistory/:customerId', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'client', 'build', 'index.html'));
 });
 
 app.use(errorMiddleware);
