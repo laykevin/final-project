@@ -37,13 +37,13 @@ Try the application live at [https://mariomart.azurewebsites.net/](https://mario
 
 ![Mario Mart](md.assets/mario-mart-cart-demo.gif)
 
-<!-- ### System Requirements
+### System Requirements
 
-- Node.js 10 or higher
-- NPM 6 or higher
-- PostgreSQL
+- Node.js 18 or higher
+- NPM 8 or higher
+- PostgreSQL 14 or higher
 
-### Getting Started
+<!-- ### Getting Started
 
 1. Clone the repository.
 
