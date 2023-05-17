@@ -33,15 +33,17 @@ export function SignIn( {onSignIn} ) {
     }
   }
 
+  function demoAccountSignIn () {
+    setUsername('demo');
+    setPassword('123');
+  }
+
   return (
     <div className="container black-bg-img flex-grow-1">
       <div className="py-5 text-center text-white">
         <h2>Please Sign In to Continue</h2>
       </div>
       <form id="sign-up-form" className="p-4 col-md-6 col-12 rounded bg-none m-auto" onSubmit={handleSubmit}>
-        <div className='text-white'>
-          <p>Username: demo<span className='d-block'>Password: 123</span></p>
-        </div>
         <div className="input-group mb-3">
           <div className="form-floating">
             <input required type="text" className="form-control" id="inputUsername" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
@@ -56,6 +58,7 @@ export function SignIn( {onSignIn} ) {
         </div>
         <div className='d-flex justify-content-between align-items-center mt-5'>
           <button type="submit" className="btn btn-primary">Sign In</button>
+          <button type="submit" className="btn btn-primary" onClick={demoAccountSignIn}>Use Demo Account</button>
           <Link to="/signup">Don't have an account? Sign Up</Link>
         </div>
         {error && <div style={{ color: 'red' }}>⚠️{error}⚠️</div>}
