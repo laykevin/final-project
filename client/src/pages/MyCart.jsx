@@ -65,7 +65,7 @@ export function MyCart() {
     <div className="container text-white black-bg-img flex-grow-1">
       <div className="d-flex justify-content-between my-4 position-relative">
         <Link className="btn btn-outline-light position-absolute top-50 translate-middle-y" to="/catalog">
-          <HiOutlineChevronLeft /> Back to Items
+          <HiOutlineChevronLeft /><span className="d-none d-md-inline">Back to Items</span>
         </Link>
         <h1 className="text-center flex-grow-1">My Kart</h1>
       </div>
