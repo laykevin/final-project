@@ -48,7 +48,7 @@ Try the application live at [https://mariomart.azurewebsites.net/](https://mario
 1. Clone the repository.
 
     ```shell
-    git clone https://github.com/laykevin/final-project
+    git clone https://github.com/laykevin/mario-mart
     cd final-project
     ```
 
