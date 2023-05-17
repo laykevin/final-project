@@ -4,7 +4,6 @@ export * from './Footer';
 export * from './LoadingSpinner';
 export * from './MyCartList';
 export * from './NavBar';
-export * from './ProductInformation';
 export * from './QuantityCounter';
 export * from './RelatedProducts';
 export * from './RelatedProductsList';
