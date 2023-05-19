@@ -1,15 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import errorMiddleware from './lib/error-middleware.js';
-// import authorizationMiddleware from './lib/authorization-middleware.js';
+import authorizationMiddleware from './lib/authorization-middleware.js';
 import pg from 'pg';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import ClientError from './lib/client-error.js';
 
-// eslint-disable-next-line no-unused-vars -- Remove when used
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -20,14 +17,10 @@ const db = new pg.Pool({
 const app = express();
 // Create paths for static directories
 const reactStaticDir = new URL('../client/build', import.meta.url).pathname;
-const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
 app.use(express.static(reactStaticDir));
-// Static directory for file uploads server/public/
-app.use(express.static(uploadsStaticDir));
-app.use(express.json());
 
-app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'client', 'build')));
+app.use(express.json());
 
 app.get('/api/products', async (req, res, next) => {
   try {
@@ -177,6 +170,7 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
 
 // TODO: Use express router to define auth protected endpoints
 // app.use(authorizationMiddleware);
+app.use('/api/*', authorizationMiddleware);
 
 app.get('/api/mycart/:customerId', async (req, res, next) => {
   try {
@@ -357,9 +351,7 @@ app.get('/api/orderhistory/:customerId', async (req, res, next) => {
   }
 });
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'client', 'build', 'index.html'));
-});
+app.get('*', (req, res) => res.sendFile(`${reactStaticDir}/index.html`));
 
 app.use(errorMiddleware);
 
