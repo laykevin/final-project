@@ -26,7 +26,7 @@ function App() {
     const { user, token } = result;
     localStorage.setItem(tokenKey, token);
     setUser(user);
-    navigate(-2);
+    navigate(-1);
   }
 
   function handleSignOut() {
