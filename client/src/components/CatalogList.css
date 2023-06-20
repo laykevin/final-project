@@ -1,0 +1,60 @@
+.catalog-products {
+  width: 20rem;
+  height: 20rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 2rem;
+  background-color: rgb(125, 125, 125, 0.3);
+  border-radius: 5%;
+
+}
+
+.catalog-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  color: black;
+}
+
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.catalog-img {
+  width: 15rem;
+  max-height: 15rem;
+  object-fit: contain;
+}
+
+.catalog-h1 {
+  text-align: center;
+  padding: 1rem auto;
+  color: white;
+}
+
+.form-flex {
+  display: flex;
+  margin-left: auto;
+}
+
+@keyframes saveFade {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.save-fade {
+  animation: saveFade .25s;
+    /* position: absolute;
+      bottom: 1rem;
+      left: 1rem; */
+}

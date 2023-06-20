@@ -1,5 +1,13 @@
 .App {
-  text-align: center;
+  /* text-align: center; */
+}
+
+body {
+  /* background-image: url('https://wallpaperaccess.com/full/8464664.jpg'); */
+  background: url('https://wallpaperaccess.com/full/8464664.jpg') center fixed;
+  /* background-image: url(https://64.media.tumblr.com/140c4af8efe2f35c0ea928effeae2ba5/tumblr_pca4yxCW5v1rrftcdo1_540.png); */
+  /* background-image: url(https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/cf8b6992222827.5e49a4132099a.jpg); */
+  background-size: cover;
 }
 
 .App-logo {

@@ -1,0 +1,34 @@
+.image {
+  width: 100%;
+  height: 350px;
+  object-fit: contain;
+}
+
+.cart-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+}
+
+.long-description {
+  white-space: pre-wrap;
+}
+
+.related-h3 {
+  text-align: center;
+}
+
+.pos-rel {
+  position: relative;
+}
+
+.add-cart-button {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 9.5rem;
+}
+
+.pils {
+  padding-inline-start: 0;
+}
